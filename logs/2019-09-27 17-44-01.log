@@ -1,0 +1,2 @@
+epoch,classification_output_acc,classification_output_loss,loss,lr,segmentation_output_acc,segmentation_output_loss
+0,0.9281767955801105,0.2158636699703352,0.37244964255153806,1e-04,0.6493946213419266,0.15658597244742167

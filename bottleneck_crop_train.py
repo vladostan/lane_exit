@@ -4,25 +4,21 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 # In[]: Imports
 import json
+import pickle
 import matplotlib.pylab as plt
 from glob import glob
 import numpy as np
 import datetime
 import sys
-import keras
-from keras.utils import plot_model
-from keras.utils import to_categorical
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
-from segmentation_models import Linknet, Linknet_notop, Linknet_bottleneck, Linknet_bottleneck_crop
-from classification_models.senet import SEResNet50, preprocess_input
+from segmentation_models import Linknet_bottleneck_crop
 from keras import optimizers, callbacks
-from losses import dice_coef_multiclass_loss
 from albumentations import (
     OneOf,
     Blur,
@@ -38,14 +34,21 @@ from albumentations import (
 # In[]: Parameters
 log = True
 visualize = False
+aug = True
 
 num_classes = 1
-input_shape = (512, 1280, 3)
+
+resize = False
+input_shape = (256, 640, 3) if resize else (512, 1280, 3)
+
 backbone = 'resnet18'
 
 random_state = 28
 
-batch_size = 8
+batch_factor = 2
+batch_size_init = 8
+batch_size = batch_size_init//batch_factor
+
 verbose = 2
 
 # In[]: Logger
@@ -63,19 +66,17 @@ class Logger(object):
         self.log.write(message)  
 
     def flush(self):
-        #this flush method is needed for python 3 compatibility.
-        #this handles the flush command by doing nothing.
-        #you might want to specify some extra behavior here.
         pass    
 
 if log:
     sys.stdout = Logger()
 
 print('Date and time: {}\n'.format(loggername))
+print("LOG: {}\nAUG: {}\nNUM CLASSES: {}\nRESIZE: {}\nINPUT SHAPE: {}\nBACKBONE: {}\nRANDOM STATE: {}\nBATCH SIZE: {}\n".format(log, aug, num_classes, resize, input_shape, backbone, random_state, batch_size))
 
 # In[]:
-dataset_dir = "../../../colddata/datasets/supervisely/kamaz/KIA in summer Innopolis/"
-subdirs = ["2019-04-24", "2019-05-08"]
+dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
+subdirs = ["2019-04-24", "2019-05-08", "2019-05-15"]
 
 obj_class_to_machine_color = dataset_dir + "obj_class_to_machine_color.json"
 
@@ -86,12 +87,17 @@ ann_files = []
 for subdir in subdirs:
     ann_files += [f for f in glob(dataset_dir + subdir + '/ann/' + '*.json', recursive=True)]
     
+print("DATASETS USED: {}".format(subdirs))
+print("TOTAL IMAGES COUNT: {}\n".format(len(ann_files)))
+
 # In[]:
-def get_image(path, label = False):
+def get_image(path, label = False, resize = False):
     img = Image.open(path)
+    if resize:
+        img = img.resize(input_shape[:2][::-1])
     img = np.array(img) 
     if label:
-        return img[...,0]
+        return img[..., 0]
     return img  
 
 with open(ann_files[0]) as json_file:
@@ -103,47 +109,76 @@ img_path = ann_files[0].replace('/ann/', '/img/').split('.json')[0]
 label_path = ann_files[0].replace('/ann/', '/masks_machine/').split('.json')[0]
 
 print("Images dtype: {}".format(get_image(img_path).dtype))
-print("Labels dtype: {}\n".format(get_image(label_path, label=True).dtype))
-print("Images shape: {}".format(get_image(img_path).shape))
-print("Labels shape: {}\n".format(get_image(label_path, label=True).shape))
+print("Labels dtype: {}\n".format(get_image(label_path, label = True).dtype))
+print("Images shape: {}".format(get_image(img_path, resize = True if resize else False).shape))
+print("Labels shape: {}\n".format(get_image(label_path, label = True, resize = True if resize else False).shape))
 
 # In[]: Visualise
 if visualize:
     i = 28
-    x = get_image(img_path)
-    y = get_image(label_path, label=True)==object_color['direct'][0]
+    x = get_image(img_path, resize = True if resize else False)
+    y = get_image(label_path, label = True, resize = True if resize else False) == object_color['direct'][0]
     fig, axes = plt.subplots(nrows = 2, ncols = 1)
     axes[0].imshow(x)
     axes[1].imshow(y)
     fig.tight_layout()
 
 # In[]: Prepare for training
-test_size = 0.2
+val_size = 0.
+test_size = 0.25
 
-print("Train:test split = {}:{}\n".format(1-test_size, test_size))
+print("Train:Val:Test split = {}:{}:{}\n".format(1-val_size-test_size, val_size, test_size))
 
-ann_files_train, ann_files_test = train_test_split(ann_files, test_size=test_size, random_state=random_state)
+ann_files_train, ann_files_valtest = train_test_split(ann_files, test_size=val_size+test_size, random_state=random_state)
+ann_files_val, ann_files_test = train_test_split(ann_files_valtest, test_size=test_size/(test_size+val_size+1e-8)-1e-8, random_state=random_state)
+del(ann_files_valtest)
 
 print("Training files count: {}".format(len(ann_files_train)))
+print("Validation files count: {}".format(len(ann_files_val)))
 print("Testing files count: {}\n".format(len(ann_files_test)))
 
+if log:
+    with open('pickles/{}.pickle'.format(loggername), 'wb') as f:
+        pickle.dump(ann_files_train, f)
+        pickle.dump(ann_files_val, f)
+        pickle.dump(ann_files_test, f)
+
+# In[]:
+def augment(image):
+    
+    aug = OneOf([
+        Blur(blur_limit=5, p=1.),
+        RandomGamma(gamma_limit=(50, 150), p=1.),
+        HueSaturationValue(hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20, p=1.),
+        RGBShift(r_shift_limit=15, g_shift_limit=5, b_shift_limit=15, p=1.),
+        RandomBrightness(limit=.25, p=1.),
+        RandomContrast(limit=.25, p=1.),
+        MedianBlur(blur_limit=5, p=1.),
+        CLAHE(clip_limit=2.0, tile_grid_size=(8, 8), p=1.)
+        ], p=1.)
+
+    augmented = aug(image=image)
+    image_augmented = augmented['image']
+    
+    return image_augmented
+    
 # In[]: 
-def custom_generator(files, preprocessing_fn = None, batch_size = 1):
+def train_generator(files, preprocessing_fn = None, aug = False, batch_size = 1):
     
     i = 0
     
     while True:
         
-        x_batch = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
-        y1_batch = np.zeros((batch_size, num_classes), dtype=np.int64)
-        y2_batch = np.zeros((batch_size, input_shape[0], input_shape[1]))
+        x_batch = np.zeros((batch_factor*batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
+        y1_batch = np.zeros((batch_factor*batch_size, num_classes), dtype=np.int64)
+        y2_batch = np.zeros((batch_factor*batch_size, input_shape[0], input_shape[1]))
         
         for b in range(batch_size):
             
             if i == len(files):
                 i = 0
                 
-            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0])
+            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
             
             with open(ann_files[i]) as json_file:
                 data = json.load(json_file)
@@ -159,7 +194,61 @@ def custom_generator(files, preprocessing_fn = None, batch_size = 1):
                             y1 = 1
                             break
                         
-            y2 = get_image(ann_files[i].replace('/ann/', '/masks_machine/').split('.json')[0], label=True)
+            y2 = get_image(ann_files[i].replace('/ann/', '/masks_machine/').split('.json')[0], label=True, resize = True if resize else False)
+            y2 = y2 == object_color['direct'][0]
+            
+            x_batch[batch_factor*b] = x
+            y1_batch[batch_factor*b] = y1
+            y2_batch[batch_factor*b] = y2
+            
+            if aug == 1:
+                x2 = augment(x)
+                x_batch[batch_factor*b+1] = x2
+                y1_batch[batch_factor*b+1] = y1
+                y2_batch[batch_factor*b+1] = y2
+                
+            i += 1
+            
+        x_batch = preprocessing_fn(x_batch)
+        y2_batch = np.expand_dims(y2_batch, axis = -1)
+        y2_batch = y2_batch.astype('int64')
+    
+        y_batch = {'classification_output': y1_batch, 'segmentation_output': y2_batch}
+        
+        yield (x_batch, y_batch)
+        
+def val_generator(files, preprocessing_fn = None, batch_size = 1):
+    
+    i = 0
+    
+    while True:
+        
+        x_batch = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
+        y1_batch = np.zeros((batch_size, num_classes), dtype=np.int64)
+        y2_batch = np.zeros((batch_size, input_shape[0], input_shape[1]))
+        
+        for b in range(batch_size):
+            
+            if i == len(files):
+                i = 0
+                
+            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
+            
+            with open(ann_files[i]) as json_file:
+                data = json.load(json_file)
+                tags = data['tags']
+
+            y1 = 0
+            if len(tags) > 0:
+                for tag in range(len(tags)):
+                    tag_name = tags[tag]['name']
+                    if tag_name == 'offlane':
+                        value = tags[tag]['value']
+                        if value == '1':
+                            y1 = 1
+                            break
+                        
+            y2 = get_image(ann_files[i].replace('/ann/', '/masks_machine/').split('.json')[0], label=True, resize = True if resize else False)
             y2 = y2 == object_color['direct'][0]
             
             x_batch[b] = x
@@ -179,14 +268,19 @@ def custom_generator(files, preprocessing_fn = None, batch_size = 1):
 # In[]:
 preprocessing_fn = get_preprocessing(backbone)
 
-train_gen = custom_generator(files = ann_files_train, 
+train_gen = train_generator(files = ann_files_train, 
                              preprocessing_fn = preprocessing_fn, 
+                             aug = aug,
                              batch_size = batch_size)
+
+if val_size > 0:
+    val_gen = val_generator(files = ann_files_val, 
+                             preprocessing_fn = preprocessing_fn, 
+                             batch_size = batch_size_init)
 
 # In[]: Bottleneck
 model = Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classes=num_classes, activation='sigmoid')
-#plot_model(model, to_file='linknet_bottleneck_crop.png')
-#model.summary()
+model.summary()
 
 # In[]: 
 from losses import dice_coef_binary_loss
@@ -196,30 +290,38 @@ losses = {
         "segmentation_output": dice_coef_binary_loss
 }
 
-lossWeights = {
+loss_weights = {
         "classification_output": 1.0,
         "segmentation_output": 1.0
 }
 
 optimizer = optimizers.Adam(lr = 1e-4)
-model.compile(optimizer=optimizer, loss=losses, loss_weights=lossWeights, metrics=["accuracy"])
+model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=["accuracy"])
 
 # In[]:
-reduce_lr_1 = callbacks.ReduceLROnPlateau(monitor='classification_output_loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
-reduce_lr_2 = callbacks.ReduceLROnPlateau(monitor='segmentation_output_loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
+monitor = 'val_' if val_size > 0 else ''
+    
+#reduce_lr_1 = callbacks.ReduceLROnPlateau(monitor = monitor+'classification_output_loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
+#reduce_lr_2 = callbacks.ReduceLROnPlateau(monitor = monitor+'segmentation_output_loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
+#
+#early_stopper_1 = callbacks.EarlyStopping(monitor = monitor+'classification_output_loss', patience = 10, verbose = 1)
+#early_stopper_2 = callbacks.EarlyStopping(monitor = monitor+'segmentation_output_loss', patience = 10, verbose = 1)
 
-early_stopper_1 = callbacks.EarlyStopping(monitor='classification_output_loss', patience = 10, verbose = 1)
-early_stopper_2 = callbacks.EarlyStopping(monitor='segmentation_output_loss', patience = 10, verbose = 1)
+reduce_lr = callbacks.ReduceLROnPlateau(monitor = monitor+'loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
+early_stopper = callbacks.EarlyStopping(monitor = monitor+'loss', patience = 10, verbose = 1)
 
-clbacks = [reduce_lr_1, reduce_lr_2, early_stopper_1, early_stopper_2]
+#clbacks = [reduce_lr_1, reduce_lr_2, early_stopper_1, early_stopper_2]
+clbacks = [reduce_lr, early_stopper]
 
 if log:
     csv_logger = callbacks.CSVLogger('logs/{}.log'.format(loggername))
-    model_checkpoint_1 = callbacks.ModelCheckpoint('weights/{}.hdf5'.format(loggername), monitor = 'classification_output_loss', verbose = 1, save_best_only = True, save_weights_only = True)
-    model_checkpoint_2 = callbacks.ModelCheckpoint('weights/{}.hdf5'.format(loggername), monitor = 'segmentation_output_loss', verbose = 1, save_best_only = True, save_weights_only = True)
+#    model_checkpoint_1 = callbacks.ModelCheckpoint('weights/{}.hdf5'.format(loggername), monitor = monitor+'classification_output_loss', verbose = 1, save_best_only = True, save_weights_only = True)
+#    model_checkpoint_2 = callbacks.ModelCheckpoint('weights/{}.hdf5'.format(loggername), monitor = monitor+'segmentation_output_loss', verbose = 1, save_best_only = True, save_weights_only = True)
+    model_checkpoint = callbacks.ModelCheckpoint('weights/{}.hdf5'.format(loggername), monitor = monitor+'loss', verbose = 1, save_best_only = True, save_weights_only = True)
     clbacks.append(csv_logger)
-    clbacks.append(model_checkpoint_1)
-    clbacks.append(model_checkpoint_2)
+#    clbacks.append(model_checkpoint_1)
+#    clbacks.append(model_checkpoint_2)
+    clbacks.append(model_checkpoint)
 
 print("Callbacks used:")
 for c in clbacks:
@@ -227,12 +329,33 @@ for c in clbacks:
 
 # In[]: 
 steps_per_epoch = len(ann_files_train)//batch_size
+validation_steps = len(ann_files_val)//batch_size
 epochs = 1000
 
-history = model.fit_generator(
-        generator = train_gen,
-        steps_per_epoch = steps_per_epoch,
-        epochs = epochs,
-        verbose = verbose,
-        callbacks = clbacks
-        )
+print("Steps per epoch: {}".format(steps_per_epoch))
+
+print("Starting training...\n")
+if val_size > 0:
+    history = model.fit_generator(
+            generator = train_gen,
+            steps_per_epoch = steps_per_epoch,
+            epochs = epochs,
+            verbose = verbose,
+            callbacks = clbacks,
+            validation_data = val_gen,
+            validation_steps = validation_steps
+    )
+else:
+    history = model.fit_generator(
+            generator = train_gen,
+            steps_per_epoch = steps_per_epoch,
+            epochs = epochs,
+            verbose = verbose,
+            callbacks = clbacks
+    )
+print("Finished training\n")
+
+now = datetime.datetime.now()
+loggername = str(now).split(".")[0]
+loggername = loggername.replace(":","-")
+print('Date and time: {}\n'.format(loggername))

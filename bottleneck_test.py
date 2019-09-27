@@ -20,7 +20,7 @@ from keras.utils import to_categorical
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
-from segmentation_models import Linknet, Linknet_notop, Linknet_bottleneck
+from segmentation_models import Linknet, Linknet_notop, Linknet_bottleneck, Linknet_bottleneck_crop
 from classification_models.senet import SEResNet50, preprocess_input
 from keras import optimizers, callbacks
 from losses import dice_coef_multiclass_loss
@@ -45,7 +45,7 @@ batch_size = 1
 verbose = 1
 
 # In[]:
-dataset_dir = "../../../colddata/datasets/supervisely/kamaz/KIA in summer Innopolis/"
+dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
 subdirs = ["2019-04-24", "2019-05-08"]
 
 obj_class_to_machine_color = dataset_dir + "obj_class_to_machine_color.json"
@@ -172,7 +172,7 @@ eval_gen = evaluate_generator(files = ann_files_test,
 
 # In[]: Bottleneck
 weights = '2019-09-18 10-46-35.hdf5'
-model = Linknet_bottleneck(backbone_name=backbone, input_shape=input_shape, classes=num_classes, activation='sigmoid')
+model = Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classes=num_classes, activation='sigmoid')
 model.load_weights('weights/' + weights)
 
 # In[]: 
