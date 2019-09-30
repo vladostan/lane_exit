@@ -269,3 +269,724 @@ decoder_stage2_relu2 (Activatio (None, 128, 320, 32) 0           decoder_stage2_
 __________________________________________________________________________________________________
 decoder_stage2_conv3 (Conv2D)   (None, 128, 320, 64) 2048        decoder_stage2_relu2[0][0]       
 __________________________________________________________________________________________________
+decoder_stage2_bn3 (BatchNormal (None, 128, 320, 64) 256         decoder_stage2_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage2_relu3 (Activatio (None, 128, 320, 64) 0           decoder_stage2_bn3[0][0]         
+__________________________________________________________________________________________________
+add_11 (Add)                    (None, 128, 320, 64) 0           decoder_stage2_relu3[0][0]       
+                                                                 stage2_unit1_relu1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_conv1 (Conv2D)   (None, 128, 320, 16) 1024        add_11[0][0]                     
+__________________________________________________________________________________________________
+decoder_stage3_bn1 (BatchNormal (None, 128, 320, 16) 64          decoder_stage3_conv1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu1 (Activatio (None, 128, 320, 16) 0           decoder_stage3_bn1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_upsample2 (UpSam (None, 256, 640, 16) 0           decoder_stage3_relu1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_conv2 (Conv2D)   (None, 256, 640, 16) 2304        decoder_stage3_upsample2[0][0]   
+__________________________________________________________________________________________________
+decoder_stage3_bn2 (BatchNormal (None, 256, 640, 16) 64          decoder_stage3_conv2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu2 (Activatio (None, 256, 640, 16) 0           decoder_stage3_bn2[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_conv3 (Conv2D)   (None, 256, 640, 64) 1024        decoder_stage3_relu2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_bn3 (BatchNormal (None, 256, 640, 64) 256         decoder_stage3_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu3 (Activatio (None, 256, 640, 64) 0           decoder_stage3_bn3[0][0]         
+__________________________________________________________________________________________________
+add_12 (Add)                    (None, 256, 640, 64) 0           decoder_stage3_relu3[0][0]       
+                                                                 relu0[0][0]                      
+__________________________________________________________________________________________________
+decoder_stage4_conv1 (Conv2D)   (None, 256, 640, 16) 1024        add_12[0][0]                     
+__________________________________________________________________________________________________
+decoder_stage4_bn1 (BatchNormal (None, 256, 640, 16) 64          decoder_stage4_conv1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu1 (Activatio (None, 256, 640, 16) 0           decoder_stage4_bn1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage4_upsample2 (UpSam (None, 512, 1280, 16 0           decoder_stage4_relu1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_conv2 (Conv2D)   (None, 512, 1280, 16 2304        decoder_stage4_upsample2[0][0]   
+__________________________________________________________________________________________________
+decoder_stage4_bn2 (BatchNormal (None, 512, 1280, 16 64          decoder_stage4_conv2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu2 (Activatio (None, 512, 1280, 16 0           decoder_stage4_bn2[0][0]         
+__________________________________________________________________________________________________
+decoder_stage4_conv3 (Conv2D)   (None, 512, 1280, 16 256         decoder_stage4_relu2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_bn3 (BatchNormal (None, 512, 1280, 16 64          decoder_stage4_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu3 (Activatio (None, 512, 1280, 16 0           decoder_stage4_bn3[0][0]         
+__________________________________________________________________________________________________
+cropping2d_1 (Cropping2D)       (None, 16, 16, 512)  0           relu1[0][0]                      
+__________________________________________________________________________________________________
+final_conv (Conv2D)             (None, 512, 1280, 1) 145         decoder_stage4_relu3[0][0]       
+__________________________________________________________________________________________________
+global_average_pooling2d_1 (Glo (None, 512)          0           cropping2d_1[0][0]               
+__________________________________________________________________________________________________
+segmentation_output (Activation (None, 512, 1280, 1) 0           final_conv[0][0]                 
+__________________________________________________________________________________________________
+classification_output (Dense)   (None, 1)            513         global_average_pooling2d_1[0][0] 
+==================================================================================================
+Total params: 11,522,203
+Trainable params: 11,512,181
+Non-trainable params: 10,022
+__________________________________________________________________________________________________
+Callbacks used:
+<keras.callbacks.ReduceLROnPlateau object at 0x7f9029dc64a8>
+<keras.callbacks.EarlyStopping object at 0x7f9029db3cc0>
+<keras.callbacks.CSVLogger object at 0x7f9029d18b38>
+<keras.callbacks.ModelCheckpoint object at 0x7f9029d181d0>
+Steps per epoch: 181
+Starting training...
+
+Epoch 1/1000
+ - 74s - loss: 0.3724 - segmentation_output_loss: 0.1566 - classification_output_loss: 0.2159 - segmentation_output_acc: 0.6494 - classification_output_acc: 0.9282
+
+Epoch 00001: loss improved from inf to 0.37245, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 2/1000
+ - 62s - loss: 0.1564 - segmentation_output_loss: 0.0544 - classification_output_loss: 0.1020 - segmentation_output_acc: 0.9521 - classification_output_acc: 0.9682
+
+Epoch 00002: loss improved from 0.37245 to 0.15641, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 3/1000
+ - 60s - loss: 0.0661 - segmentation_output_loss: 0.0285 - classification_output_loss: 0.0375 - segmentation_output_acc: 0.9605 - classification_output_acc: 0.9869
+
+Epoch 00003: loss improved from 0.15641 to 0.06606, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 4/1000
+ - 59s - loss: 0.0309 - segmentation_output_loss: 0.0195 - classification_output_loss: 0.0113 - segmentation_output_acc: 0.9665 - classification_output_acc: 0.9986
+
+Epoch 00004: loss improved from 0.06606 to 0.03086, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 5/1000
+ - 66s - loss: 0.0196 - segmentation_output_loss: 0.0159 - classification_output_loss: 0.0037 - segmentation_output_acc: 0.9694 - classification_output_acc: 0.9986
+
+Epoch 00005: loss improved from 0.03086 to 0.01959, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 6/1000
+ - 62s - loss: 0.0162 - segmentation_output_loss: 0.0132 - classification_output_loss: 0.0030 - segmentation_output_acc: 0.9733 - classification_output_acc: 0.9979
+
+Epoch 00006: loss improved from 0.01959 to 0.01616, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 7/1000
+ - 58s - loss: 0.0131 - segmentation_output_loss: 0.0119 - classification_output_loss: 0.0013 - segmentation_output_acc: 0.9748 - classification_output_acc: 1.0000
+
+Epoch 00007: loss improved from 0.01616 to 0.01314, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 8/1000
+ - 59s - loss: 0.0110 - segmentation_output_loss: 0.0102 - classification_output_loss: 7.8848e-04 - segmentation_output_acc: 0.9780 - classification_output_acc: 1.0000
+
+Epoch 00008: loss improved from 0.01314 to 0.01103, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 9/1000
+ - 61s - loss: 0.0160 - segmentation_output_loss: 0.0111 - classification_output_loss: 0.0048 - segmentation_output_acc: 0.9751 - classification_output_acc: 0.9979
+
+Epoch 00009: loss did not improve from 0.01103
+Epoch 10/1000
+ - 64s - loss: 0.0115 - segmentation_output_loss: 0.0096 - classification_output_loss: 0.0019 - segmentation_output_acc: 0.9783 - classification_output_acc: 0.9993
+
+Epoch 00010: loss did not improve from 0.01103
+Epoch 11/1000
+ - 62s - loss: 0.0087 - segmentation_output_loss: 0.0084 - classification_output_loss: 2.4931e-04 - segmentation_output_acc: 0.9811 - classification_output_acc: 1.0000
+
+Epoch 00011: loss improved from 0.01103 to 0.00866, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 12/1000
+ - 60s - loss: 0.0072 - segmentation_output_loss: 0.0070 - classification_output_loss: 1.0893e-04 - segmentation_output_acc: 0.9842 - classification_output_acc: 1.0000
+
+Epoch 00012: loss improved from 0.00866 to 0.00716, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 13/1000
+ - 61s - loss: 0.0068 - segmentation_output_loss: 0.0065 - classification_output_loss: 3.3087e-04 - segmentation_output_acc: 0.9855 - classification_output_acc: 1.0000
+
+Epoch 00013: loss improved from 0.00716 to 0.00679, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 14/1000
+ - 59s - loss: 0.0486 - segmentation_output_loss: 0.0075 - classification_output_loss: 0.0412 - segmentation_output_acc: 0.9830 - classification_output_acc: 0.9896
+
+Epoch 00014: loss did not improve from 0.00679
+Epoch 15/1000
+ - 59s - loss: 0.1867 - segmentation_output_loss: 0.0153 - classification_output_loss: 0.1713 - segmentation_output_acc: 0.9639 - classification_output_acc: 0.9441
+
+Epoch 00015: loss did not improve from 0.00679
+Epoch 16/1000
+ - 61s - loss: 0.0576 - segmentation_output_loss: 0.0131 - classification_output_loss: 0.0444 - segmentation_output_acc: 0.9689 - classification_output_acc: 0.9820
+
+Epoch 00016: loss did not improve from 0.00679
+Epoch 17/1000
+ - 64s - loss: 0.0153 - segmentation_output_loss: 0.0110 - classification_output_loss: 0.0043 - segmentation_output_acc: 0.9741 - classification_output_acc: 1.0000
+
+Epoch 00017: loss did not improve from 0.00679
+Epoch 18/1000
+ - 65s - loss: 0.0107 - segmentation_output_loss: 0.0096 - classification_output_loss: 0.0011 - segmentation_output_acc: 0.9775 - classification_output_acc: 1.0000
+
+Epoch 00018: ReduceLROnPlateau reducing learning rate to 4.999999873689376e-05.
+
+Epoch 00018: loss did not improve from 0.00679
+Epoch 19/1000
+ - 67s - loss: 0.0091 - segmentation_output_loss: 0.0085 - classification_output_loss: 5.9023e-04 - segmentation_output_acc: 0.9801 - classification_output_acc: 1.0000
+
+Epoch 00019: loss did not improve from 0.00679
+Epoch 20/1000
+ - 68s - loss: 0.0081 - segmentation_output_loss: 0.0078 - classification_output_loss: 3.8023e-04 - segmentation_output_acc: 0.9820 - classification_output_acc: 1.0000
+
+Epoch 00020: loss did not improve from 0.00679
+Epoch 21/1000
+ - 67s - loss: 0.0079 - segmentation_output_loss: 0.0074 - classification_output_loss: 4.3829e-04 - segmentation_output_acc: 0.9827 - classification_output_acc: 1.0000
+
+Epoch 00021: loss did not improve from 0.00679
+Epoch 22/1000
+ - 68s - loss: 0.0071 - segmentation_output_loss: 0.0068 - classification_output_loss: 2.5164e-04 - segmentation_output_acc: 0.9842 - classification_output_acc: 1.0000
+
+Epoch 00022: loss did not improve from 0.00679
+Epoch 23/1000
+ - 68s - loss: 0.0067 - segmentation_output_loss: 0.0064 - classification_output_loss: 3.0094e-04 - segmentation_output_acc: 0.9851 - classification_output_acc: 1.0000
+
+Epoch 00023: ReduceLROnPlateau reducing learning rate to 2.499999936844688e-05.
+
+Epoch 00023: loss improved from 0.00679 to 0.00671, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 24/1000
+ - 68s - loss: 0.0063 - segmentation_output_loss: 0.0061 - classification_output_loss: 1.9174e-04 - segmentation_output_acc: 0.9859 - classification_output_acc: 1.0000
+
+Epoch 00024: loss improved from 0.00671 to 0.00625, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 25/1000
+ - 67s - loss: 0.0059 - segmentation_output_loss: 0.0056 - classification_output_loss: 2.3459e-04 - segmentation_output_acc: 0.9869 - classification_output_acc: 1.0000
+
+Epoch 00025: loss improved from 0.00625 to 0.00588, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 26/1000
+ - 67s - loss: 0.0057 - segmentation_output_loss: 0.0055 - classification_output_loss: 2.1567e-04 - segmentation_output_acc: 0.9873 - classification_output_acc: 1.0000
+
+Epoch 00026: loss improved from 0.00588 to 0.00570, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 27/1000
+ - 64s - loss: 0.0061 - segmentation_output_loss: 0.0053 - classification_output_loss: 8.2494e-04 - segmentation_output_acc: 0.9878 - classification_output_acc: 0.9993
+
+Epoch 00027: loss did not improve from 0.00570
+Epoch 28/1000
+ - 66s - loss: 0.0053 - segmentation_output_loss: 0.0051 - classification_output_loss: 2.0097e-04 - segmentation_output_acc: 0.9882 - classification_output_acc: 1.0000
+
+Epoch 00028: loss improved from 0.00570 to 0.00529, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 29/1000
+ - 68s - loss: 0.0053 - segmentation_output_loss: 0.0050 - classification_output_loss: 3.7025e-04 - segmentation_output_acc: 0.9885 - classification_output_acc: 1.0000
+
+Epoch 00029: loss did not improve from 0.00529
+Epoch 30/1000
+ - 68s - loss: 0.0049 - segmentation_output_loss: 0.0047 - classification_output_loss: 1.5017e-04 - segmentation_output_acc: 0.9890 - classification_output_acc: 1.0000
+
+Epoch 00030: loss improved from 0.00529 to 0.00489, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 31/1000
+ - 68s - loss: 0.0046 - segmentation_output_loss: 0.0045 - classification_output_loss: 1.8089e-04 - segmentation_output_acc: 0.9896 - classification_output_acc: 1.0000
+
+Epoch 00031: loss improved from 0.00489 to 0.00465, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 32/1000
+ - 69s - loss: 0.0044 - segmentation_output_loss: 0.0043 - classification_output_loss: 1.3742e-04 - segmentation_output_acc: 0.9900 - classification_output_acc: 1.0000
+
+Epoch 00032: loss improved from 0.00465 to 0.00444, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 33/1000
+ - 67s - loss: 0.0043 - segmentation_output_loss: 0.0041 - classification_output_loss: 1.7861e-04 - segmentation_output_acc: 0.9904 - classification_output_acc: 1.0000
+
+Epoch 00033: loss improved from 0.00444 to 0.00432, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 34/1000
+ - 68s - loss: 0.0042 - segmentation_output_loss: 0.0041 - classification_output_loss: 1.0315e-04 - segmentation_output_acc: 0.9905 - classification_output_acc: 1.0000
+
+Epoch 00034: loss improved from 0.00432 to 0.00417, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 35/1000
+ - 69s - loss: 0.0039 - segmentation_output_loss: 0.0038 - classification_output_loss: 9.0762e-05 - segmentation_output_acc: 0.9910 - classification_output_acc: 1.0000
+
+Epoch 00035: loss improved from 0.00417 to 0.00394, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 36/1000
+ - 68s - loss: 0.0039 - segmentation_output_loss: 0.0038 - classification_output_loss: 7.4599e-05 - segmentation_output_acc: 0.9911 - classification_output_acc: 1.0000
+
+Epoch 00036: loss improved from 0.00394 to 0.00386, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 37/1000
+ - 67s - loss: 0.0036 - segmentation_output_loss: 0.0035 - classification_output_loss: 8.0080e-05 - segmentation_output_acc: 0.9917 - classification_output_acc: 1.0000
+
+Epoch 00037: loss improved from 0.00386 to 0.00362, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 38/1000
+ - 69s - loss: 0.0035 - segmentation_output_loss: 0.0034 - classification_output_loss: 7.7822e-05 - segmentation_output_acc: 0.9919 - classification_output_acc: 1.0000
+
+Epoch 00038: loss improved from 0.00362 to 0.00352, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 39/1000
+ - 69s - loss: 0.0033 - segmentation_output_loss: 0.0033 - classification_output_loss: 8.3438e-05 - segmentation_output_acc: 0.9923 - classification_output_acc: 1.0000
+
+Epoch 00039: loss improved from 0.00352 to 0.00334, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 40/1000
+ - 69s - loss: 0.0033 - segmentation_output_loss: 0.0032 - classification_output_loss: 6.6441e-05 - segmentation_output_acc: 0.9924 - classification_output_acc: 1.0000
+
+Epoch 00040: loss improved from 0.00334 to 0.00329, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 41/1000
+ - 68s - loss: 0.0031 - segmentation_output_loss: 0.0031 - classification_output_loss: 6.4474e-05 - segmentation_output_acc: 0.9927 - classification_output_acc: 1.0000
+
+Epoch 00041: loss improved from 0.00329 to 0.00315, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 42/1000
+ - 69s - loss: 0.0031 - segmentation_output_loss: 0.0030 - classification_output_loss: 5.0137e-05 - segmentation_output_acc: 0.9929 - classification_output_acc: 1.0000
+
+Epoch 00042: loss improved from 0.00315 to 0.00306, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 43/1000
+ - 69s - loss: 0.0030 - segmentation_output_loss: 0.0028 - classification_output_loss: 1.1953e-04 - segmentation_output_acc: 0.9933 - classification_output_acc: 1.0000
+
+Epoch 00043: loss improved from 0.00306 to 0.00296, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 44/1000
+ - 68s - loss: 0.0031 - segmentation_output_loss: 0.0029 - classification_output_loss: 1.9715e-04 - segmentation_output_acc: 0.9930 - classification_output_acc: 1.0000
+
+Epoch 00044: loss did not improve from 0.00296
+Epoch 45/1000
+ - 67s - loss: 0.0029 - segmentation_output_loss: 0.0028 - classification_output_loss: 7.7585e-05 - segmentation_output_acc: 0.9934 - classification_output_acc: 1.0000
+
+Epoch 00045: loss improved from 0.00296 to 0.00287, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 46/1000
+ - 68s - loss: 0.0027 - segmentation_output_loss: 0.0027 - classification_output_loss: 4.0439e-05 - segmentation_output_acc: 0.9937 - classification_output_acc: 1.0000
+
+Epoch 00046: loss improved from 0.00287 to 0.00270, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 47/1000
+ - 68s - loss: 0.0027 - segmentation_output_loss: 0.0027 - classification_output_loss: 5.7803e-05 - segmentation_output_acc: 0.9936 - classification_output_acc: 1.0000
+
+Epoch 00047: loss did not improve from 0.00270
+Epoch 48/1000
+ - 68s - loss: 0.0026 - segmentation_output_loss: 0.0025 - classification_output_loss: 4.3316e-05 - segmentation_output_acc: 0.9939 - classification_output_acc: 1.0000
+
+Epoch 00048: loss improved from 0.00270 to 0.00259, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 49/1000
+ - 68s - loss: 0.0025 - segmentation_output_loss: 0.0025 - classification_output_loss: 5.8901e-05 - segmentation_output_acc: 0.9941 - classification_output_acc: 1.0000
+
+Epoch 00049: loss improved from 0.00259 to 0.00251, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 50/1000
+ - 69s - loss: 0.0024 - segmentation_output_loss: 0.0024 - classification_output_loss: 2.8311e-05 - segmentation_output_acc: 0.9943 - classification_output_acc: 1.0000
+
+Epoch 00050: loss improved from 0.00251 to 0.00241, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 51/1000
+ - 69s - loss: 0.0024 - segmentation_output_loss: 0.0023 - classification_output_loss: 2.8553e-05 - segmentation_output_acc: 0.9944 - classification_output_acc: 1.0000
+
+Epoch 00051: loss improved from 0.00241 to 0.00236, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 52/1000
+ - 68s - loss: 0.0023 - segmentation_output_loss: 0.0023 - classification_output_loss: 2.7654e-05 - segmentation_output_acc: 0.9945 - classification_output_acc: 1.0000
+
+Epoch 00052: loss improved from 0.00236 to 0.00230, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 53/1000
+ - 68s - loss: 0.0023 - segmentation_output_loss: 0.0022 - classification_output_loss: 2.7062e-05 - segmentation_output_acc: 0.9946 - classification_output_acc: 1.0000
+
+Epoch 00053: loss improved from 0.00230 to 0.00226, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 54/1000
+ - 68s - loss: 0.0023 - segmentation_output_loss: 0.0022 - classification_output_loss: 2.5523e-05 - segmentation_output_acc: 0.9946 - classification_output_acc: 1.0000
+
+Epoch 00054: loss did not improve from 0.00226
+Epoch 55/1000
+ - 68s - loss: 0.0022 - segmentation_output_loss: 0.0022 - classification_output_loss: 3.0920e-05 - segmentation_output_acc: 0.9948 - classification_output_acc: 1.0000
+
+Epoch 00055: loss improved from 0.00226 to 0.00220, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 56/1000
+ - 64s - loss: 0.0021 - segmentation_output_loss: 0.0021 - classification_output_loss: 2.2965e-05 - segmentation_output_acc: 0.9949 - classification_output_acc: 1.0000
+
+Epoch 00056: loss improved from 0.00220 to 0.00215, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 57/1000
+ - 67s - loss: 0.0021 - segmentation_output_loss: 0.0021 - classification_output_loss: 2.2433e-05 - segmentation_output_acc: 0.9949 - classification_output_acc: 1.0000
+
+Epoch 00057: loss improved from 0.00215 to 0.00213, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 58/1000
+ - 69s - loss: 0.0021 - segmentation_output_loss: 0.0020 - classification_output_loss: 1.6475e-05 - segmentation_output_acc: 0.9950 - classification_output_acc: 1.0000
+
+Epoch 00058: loss improved from 0.00213 to 0.00207, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 59/1000
+ - 67s - loss: 0.0020 - segmentation_output_loss: 0.0020 - classification_output_loss: 2.0112e-05 - segmentation_output_acc: 0.9951 - classification_output_acc: 1.0000
+
+Epoch 00059: loss improved from 0.00207 to 0.00204, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 60/1000
+ - 67s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 1.9101e-05 - segmentation_output_acc: 0.9954 - classification_output_acc: 1.0000
+
+Epoch 00060: loss improved from 0.00204 to 0.00193, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 61/1000
+ - 69s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 1.7770e-05 - segmentation_output_acc: 0.9954 - classification_output_acc: 1.0000
+
+Epoch 00061: loss improved from 0.00193 to 0.00191, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 62/1000
+ - 68s - loss: 0.0021 - segmentation_output_loss: 0.0021 - classification_output_loss: 1.3063e-05 - segmentation_output_acc: 0.9950 - classification_output_acc: 1.0000
+
+Epoch 00062: loss did not improve from 0.00191
+Epoch 63/1000
+ - 69s - loss: 0.0021 - segmentation_output_loss: 0.0020 - classification_output_loss: 1.8183e-05 - segmentation_output_acc: 0.9951 - classification_output_acc: 1.0000
+
+Epoch 00063: loss did not improve from 0.00191
+Epoch 64/1000
+ - 68s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 1.2373e-05 - segmentation_output_acc: 0.9955 - classification_output_acc: 1.0000
+
+Epoch 00064: loss improved from 0.00191 to 0.00187, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 65/1000
+ - 68s - loss: 0.0018 - segmentation_output_loss: 0.0018 - classification_output_loss: 1.5327e-05 - segmentation_output_acc: 0.9957 - classification_output_acc: 1.0000
+
+Epoch 00065: loss improved from 0.00187 to 0.00177, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 66/1000
+ - 69s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 1.2265e-05 - segmentation_output_acc: 0.9960 - classification_output_acc: 1.0000
+
+Epoch 00066: loss improved from 0.00177 to 0.00164, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 67/1000
+ - 68s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 1.1646e-05 - segmentation_output_acc: 0.9962 - classification_output_acc: 1.0000
+
+Epoch 00067: loss improved from 0.00164 to 0.00159, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 68/1000
+ - 67s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 9.4290e-06 - segmentation_output_acc: 0.9962 - classification_output_acc: 1.0000
+
+Epoch 00068: loss improved from 0.00159 to 0.00158, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 69/1000
+ - 68s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 1.1940e-05 - segmentation_output_acc: 0.9961 - classification_output_acc: 1.0000
+
+Epoch 00069: loss did not improve from 0.00158
+Epoch 70/1000
+ - 69s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 8.4908e-06 - segmentation_output_acc: 0.9960 - classification_output_acc: 1.0000
+
+Epoch 00070: loss did not improve from 0.00158
+Epoch 71/1000
+ - 68s - loss: 0.0015 - segmentation_output_loss: 0.0015 - classification_output_loss: 9.6846e-06 - segmentation_output_acc: 0.9964 - classification_output_acc: 1.0000
+
+Epoch 00071: loss improved from 0.00158 to 0.00147, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 72/1000
+ - 68s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 9.3455e-06 - segmentation_output_acc: 0.9966 - classification_output_acc: 1.0000
+
+Epoch 00072: loss improved from 0.00147 to 0.00140, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 73/1000
+ - 70s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 8.8655e-06 - segmentation_output_acc: 0.9966 - classification_output_acc: 1.0000
+
+Epoch 00073: loss did not improve from 0.00140
+Epoch 74/1000
+ - 69s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 7.9589e-06 - segmentation_output_acc: 0.9965 - classification_output_acc: 1.0000
+
+Epoch 00074: loss did not improve from 0.00140
+Epoch 75/1000
+ - 68s - loss: 0.0015 - segmentation_output_loss: 0.0015 - classification_output_loss: 9.0297e-06 - segmentation_output_acc: 0.9964 - classification_output_acc: 1.0000
+
+Epoch 00075: loss did not improve from 0.00140
+Epoch 76/1000
+ - 70s - loss: 0.0015 - segmentation_output_loss: 0.0015 - classification_output_loss: 8.4284e-06 - segmentation_output_acc: 0.9964 - classification_output_acc: 1.0000
+
+Epoch 00076: ReduceLROnPlateau reducing learning rate to 1.249999968422344e-05.
+
+Epoch 00076: loss did not improve from 0.00140
+Epoch 77/1000
+ - 70s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 8.6847e-06 - segmentation_output_acc: 0.9966 - classification_output_acc: 1.0000
+
+Epoch 00077: loss improved from 0.00140 to 0.00140, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 78/1000
+ - 70s - loss: 0.0012 - segmentation_output_loss: 0.0012 - classification_output_loss: 6.8254e-06 - segmentation_output_acc: 0.9970 - classification_output_acc: 1.0000
+
+Epoch 00078: loss improved from 0.00140 to 0.00123, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 79/1000
+ - 68s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 6.6733e-06 - segmentation_output_acc: 0.9972 - classification_output_acc: 1.0000
+
+Epoch 00079: loss improved from 0.00123 to 0.00114, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 80/1000
+ - 69s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 5.7816e-06 - segmentation_output_acc: 0.9974 - classification_output_acc: 1.0000
+
+Epoch 00080: loss improved from 0.00114 to 0.00108, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 81/1000
+ - 68s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 6.9453e-06 - segmentation_output_acc: 0.9974 - classification_output_acc: 1.0000
+
+Epoch 00081: loss improved from 0.00108 to 0.00108, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 82/1000
+ - 68s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 5.9873e-06 - segmentation_output_acc: 0.9974 - classification_output_acc: 1.0000
+
+Epoch 00082: loss improved from 0.00108 to 0.00106, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 83/1000
+ - 64s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 5.5179e-06 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000
+
+Epoch 00083: loss improved from 0.00106 to 0.00102, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 84/1000
+ - 70s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 6.6055e-06 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000
+
+Epoch 00084: loss did not improve from 0.00102
+Epoch 85/1000
+ - 69s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 5.5999e-06 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000
+
+Epoch 00085: ReduceLROnPlateau reducing learning rate to 6.24999984211172e-06.
+
+Epoch 00085: loss did not improve from 0.00102
+Epoch 86/1000
+ - 69s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 5.6042e-06 - segmentation_output_acc: 0.9973 - classification_output_acc: 1.0000
+
+Epoch 00086: loss did not improve from 0.00102
+Epoch 87/1000
+ - 68s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 6.0222e-06 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000
+
+Epoch 00087: loss improved from 0.00102 to 0.00101, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 88/1000
+ - 70s - loss: 9.7386e-04 - segmentation_output_loss: 9.6930e-04 - classification_output_loss: 4.5615e-06 - segmentation_output_acc: 0.9976 - classification_output_acc: 1.0000
+
+Epoch 00088: loss improved from 0.00101 to 0.00097, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 89/1000
+ - 70s - loss: 9.4153e-04 - segmentation_output_loss: 9.3685e-04 - classification_output_loss: 4.6853e-06 - segmentation_output_acc: 0.9977 - classification_output_acc: 1.0000
+
+Epoch 00089: loss improved from 0.00097 to 0.00094, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 90/1000
+ - 69s - loss: 9.2121e-04 - segmentation_output_loss: 9.1625e-04 - classification_output_loss: 4.9554e-06 - segmentation_output_acc: 0.9978 - classification_output_acc: 1.0000
+
+Epoch 00090: loss improved from 0.00094 to 0.00092, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 91/1000
+ - 69s - loss: 8.9771e-04 - segmentation_output_loss: 8.9288e-04 - classification_output_loss: 4.8261e-06 - segmentation_output_acc: 0.9978 - classification_output_acc: 1.0000
+
+Epoch 00091: loss improved from 0.00092 to 0.00090, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 92/1000
+ - 69s - loss: 8.7631e-04 - segmentation_output_loss: 8.7217e-04 - classification_output_loss: 4.1347e-06 - segmentation_output_acc: 0.9979 - classification_output_acc: 1.0000
+
+Epoch 00092: loss improved from 0.00090 to 0.00088, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 93/1000
+ - 65s - loss: 8.5518e-04 - segmentation_output_loss: 8.5009e-04 - classification_output_loss: 5.0934e-06 - segmentation_output_acc: 0.9979 - classification_output_acc: 1.0000
+
+Epoch 00093: loss improved from 0.00088 to 0.00086, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 94/1000
+ - 63s - loss: 8.5755e-04 - segmentation_output_loss: 8.5317e-04 - classification_output_loss: 4.3768e-06 - segmentation_output_acc: 0.9979 - classification_output_acc: 1.0000
+
+Epoch 00094: loss did not improve from 0.00086
+Epoch 95/1000
+ - 65s - loss: 8.3117e-04 - segmentation_output_loss: 8.2424e-04 - classification_output_loss: 6.9287e-06 - segmentation_output_acc: 0.9980 - classification_output_acc: 1.0000
+
+Epoch 00095: loss improved from 0.00086 to 0.00083, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 96/1000
+ - 64s - loss: 8.3184e-04 - segmentation_output_loss: 8.2768e-04 - classification_output_loss: 4.1532e-06 - segmentation_output_acc: 0.9980 - classification_output_acc: 1.0000
+
+Epoch 00096: loss did not improve from 0.00083
+Epoch 97/1000
+ - 66s - loss: 8.0326e-04 - segmentation_output_loss: 7.9902e-04 - classification_output_loss: 4.2397e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00097: loss improved from 0.00083 to 0.00080, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 98/1000
+ - 64s - loss: 7.9118e-04 - segmentation_output_loss: 7.8741e-04 - classification_output_loss: 3.7637e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00098: ReduceLROnPlateau reducing learning rate to 3.12499992105586e-06.
+
+Epoch 00098: loss improved from 0.00080 to 0.00079, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 99/1000
+ - 65s - loss: 8.2207e-04 - segmentation_output_loss: 8.1734e-04 - classification_output_loss: 4.7332e-06 - segmentation_output_acc: 0.9980 - classification_output_acc: 1.0000
+
+Epoch 00099: loss did not improve from 0.00079
+Epoch 100/1000
+ - 66s - loss: 7.9458e-04 - segmentation_output_loss: 7.9096e-04 - classification_output_loss: 3.6217e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00100: loss did not improve from 0.00079
+Epoch 101/1000
+ - 66s - loss: 7.9546e-04 - segmentation_output_loss: 7.9131e-04 - classification_output_loss: 4.1499e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00101: loss did not improve from 0.00079
+Epoch 102/1000
+ - 64s - loss: 7.8577e-04 - segmentation_output_loss: 7.8208e-04 - classification_output_loss: 3.6880e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00102: loss improved from 0.00079 to 0.00079, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 103/1000
+ - 65s - loss: 7.7679e-04 - segmentation_output_loss: 7.7306e-04 - classification_output_loss: 3.7359e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00103: ReduceLROnPlateau reducing learning rate to 1.56249996052793e-06.
+
+Epoch 00103: loss improved from 0.00079 to 0.00078, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 104/1000
+ - 65s - loss: 7.6972e-04 - segmentation_output_loss: 7.6624e-04 - classification_output_loss: 3.4790e-06 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000
+
+Epoch 00104: loss improved from 0.00078 to 0.00077, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 105/1000
+ - 65s - loss: 7.4979e-04 - segmentation_output_loss: 7.4621e-04 - classification_output_loss: 3.5822e-06 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000
+
+Epoch 00105: loss improved from 0.00077 to 0.00075, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 106/1000
+ - 64s - loss: 7.4590e-04 - segmentation_output_loss: 7.4223e-04 - classification_output_loss: 3.6622e-06 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000
+
+Epoch 00106: loss improved from 0.00075 to 0.00075, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 107/1000
+ - 65s - loss: 7.3747e-04 - segmentation_output_loss: 7.3404e-04 - classification_output_loss: 3.4277e-06 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000
+
+Epoch 00107: loss improved from 0.00075 to 0.00074, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 108/1000
+ - 66s - loss: 7.3182e-04 - segmentation_output_loss: 7.2857e-04 - classification_output_loss: 3.2491e-06 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000
+
+Epoch 00108: loss improved from 0.00074 to 0.00073, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 109/1000
+ - 66s - loss: 7.2353e-04 - segmentation_output_loss: 7.2029e-04 - classification_output_loss: 3.2446e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00109: loss improved from 0.00073 to 0.00072, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 110/1000
+ - 65s - loss: 7.2679e-04 - segmentation_output_loss: 7.2302e-04 - classification_output_loss: 3.7745e-06 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000
+
+Epoch 00110: ReduceLROnPlateau reducing learning rate to 7.81249980263965e-07.
+
+Epoch 00110: loss did not improve from 0.00072
+Epoch 111/1000
+ - 64s - loss: 7.2396e-04 - segmentation_output_loss: 7.1936e-04 - classification_output_loss: 4.6023e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00111: loss did not improve from 0.00072
+Epoch 112/1000
+ - 65s - loss: 7.0267e-04 - segmentation_output_loss: 6.9888e-04 - classification_output_loss: 3.7845e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00112: loss improved from 0.00072 to 0.00070, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 113/1000
+ - 65s - loss: 7.1045e-04 - segmentation_output_loss: 7.0717e-04 - classification_output_loss: 3.2850e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00113: loss did not improve from 0.00070
+Epoch 114/1000
+ - 64s - loss: 6.9873e-04 - segmentation_output_loss: 6.9526e-04 - classification_output_loss: 3.4699e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00114: loss improved from 0.00070 to 0.00070, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 115/1000
+ - 65s - loss: 7.0760e-04 - segmentation_output_loss: 7.0447e-04 - classification_output_loss: 3.1324e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00115: ReduceLROnPlateau reducing learning rate to 3.906249901319825e-07.
+
+Epoch 00115: loss did not improve from 0.00070
+Epoch 116/1000
+ - 65s - loss: 7.0105e-04 - segmentation_output_loss: 6.9832e-04 - classification_output_loss: 2.7288e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00116: loss did not improve from 0.00070
+Epoch 117/1000
+ - 65s - loss: 7.2035e-04 - segmentation_output_loss: 7.1702e-04 - classification_output_loss: 3.3281e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00117: loss did not improve from 0.00070
+Epoch 118/1000
+ - 63s - loss: 6.9839e-04 - segmentation_output_loss: 6.9443e-04 - classification_output_loss: 3.9582e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00118: loss improved from 0.00070 to 0.00070, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 119/1000
+ - 65s - loss: 7.0244e-04 - segmentation_output_loss: 6.9843e-04 - classification_output_loss: 4.0095e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00119: loss did not improve from 0.00070
+Epoch 120/1000
+ - 66s - loss: 6.9248e-04 - segmentation_output_loss: 6.8913e-04 - classification_output_loss: 3.3566e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00120: ReduceLROnPlateau reducing learning rate to 1.9531249506599124e-07.
+
+Epoch 00120: loss improved from 0.00070 to 0.00069, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 121/1000
+ - 66s - loss: 7.0322e-04 - segmentation_output_loss: 7.0004e-04 - classification_output_loss: 3.1801e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00121: loss did not improve from 0.00069
+Epoch 122/1000
+ - 64s - loss: 6.9351e-04 - segmentation_output_loss: 6.9007e-04 - classification_output_loss: 3.4448e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00122: loss did not improve from 0.00069
+Epoch 123/1000
+ - 63s - loss: 6.8815e-04 - segmentation_output_loss: 6.8365e-04 - classification_output_loss: 4.5035e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00123: loss improved from 0.00069 to 0.00069, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 124/1000
+ - 64s - loss: 6.9884e-04 - segmentation_output_loss: 6.9579e-04 - classification_output_loss: 3.0550e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00124: loss did not improve from 0.00069
+Epoch 125/1000
+ - 64s - loss: 6.9698e-04 - segmentation_output_loss: 6.9367e-04 - classification_output_loss: 3.3104e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00125: ReduceLROnPlateau reducing learning rate to 9.765624753299562e-08.
+
+Epoch 00125: loss did not improve from 0.00069
+Epoch 126/1000
+ - 64s - loss: 6.9127e-04 - segmentation_output_loss: 6.8782e-04 - classification_output_loss: 3.4446e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00126: loss did not improve from 0.00069
+Epoch 127/1000
+ - 64s - loss: 6.9149e-04 - segmentation_output_loss: 6.8822e-04 - classification_output_loss: 3.2670e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00127: loss did not improve from 0.00069
+Epoch 128/1000
+ - 64s - loss: 6.9993e-04 - segmentation_output_loss: 6.9684e-04 - classification_output_loss: 3.0930e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00128: loss did not improve from 0.00069
+Epoch 129/1000
+ - 64s - loss: 6.9872e-04 - segmentation_output_loss: 6.9543e-04 - classification_output_loss: 3.2878e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00129: loss did not improve from 0.00069
+Epoch 130/1000
+ - 65s - loss: 6.9613e-04 - segmentation_output_loss: 6.9327e-04 - classification_output_loss: 2.8599e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00130: ReduceLROnPlateau reducing learning rate to 4.882812376649781e-08.
+
+Epoch 00130: loss did not improve from 0.00069
+Epoch 131/1000
+ - 63s - loss: 6.8716e-04 - segmentation_output_loss: 6.8394e-04 - classification_output_loss: 3.2213e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00131: loss improved from 0.00069 to 0.00069, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 132/1000
+ - 65s - loss: 6.9907e-04 - segmentation_output_loss: 6.9623e-04 - classification_output_loss: 2.8459e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00132: loss did not improve from 0.00069
+Epoch 133/1000
+ - 66s - loss: 6.9408e-04 - segmentation_output_loss: 6.9116e-04 - classification_output_loss: 2.9176e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00133: loss did not improve from 0.00069
+Epoch 134/1000
+ - 66s - loss: 6.9903e-04 - segmentation_output_loss: 6.9572e-04 - classification_output_loss: 3.3120e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00134: loss did not improve from 0.00069
+Epoch 135/1000
+ - 64s - loss: 6.8376e-04 - segmentation_output_loss: 6.8029e-04 - classification_output_loss: 3.4723e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00135: ReduceLROnPlateau reducing learning rate to 2.4414061883248905e-08.
+
+Epoch 00135: loss improved from 0.00069 to 0.00068, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 136/1000
+ - 65s - loss: 6.8034e-04 - segmentation_output_loss: 6.7731e-04 - classification_output_loss: 3.0264e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00136: loss improved from 0.00068 to 0.00068, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 137/1000
+ - 64s - loss: 6.9006e-04 - segmentation_output_loss: 6.8623e-04 - classification_output_loss: 3.8280e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00137: loss did not improve from 0.00068
+Epoch 138/1000
+ - 62s - loss: 6.9452e-04 - segmentation_output_loss: 6.9141e-04 - classification_output_loss: 3.1087e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00138: loss did not improve from 0.00068
+Epoch 139/1000
+ - 62s - loss: 6.8329e-04 - segmentation_output_loss: 6.8026e-04 - classification_output_loss: 3.0258e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00139: loss did not improve from 0.00068
+Epoch 140/1000
+ - 64s - loss: 6.9038e-04 - segmentation_output_loss: 6.8720e-04 - classification_output_loss: 3.1826e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00140: ReduceLROnPlateau reducing learning rate to 1.2207030941624453e-08.
+
+Epoch 00140: loss did not improve from 0.00068
+Epoch 141/1000
+ - 63s - loss: 6.8684e-04 - segmentation_output_loss: 6.8326e-04 - classification_output_loss: 3.5731e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00141: loss did not improve from 0.00068
+Epoch 142/1000
+ - 63s - loss: 6.8744e-04 - segmentation_output_loss: 6.8369e-04 - classification_output_loss: 3.7506e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00142: loss did not improve from 0.00068
+Epoch 143/1000
+ - 61s - loss: 6.8458e-04 - segmentation_output_loss: 6.8132e-04 - classification_output_loss: 3.2526e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00143: loss did not improve from 0.00068
+Epoch 144/1000
+ - 62s - loss: 6.8008e-04 - segmentation_output_loss: 6.7728e-04 - classification_output_loss: 2.7914e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00144: loss improved from 0.00068 to 0.00068, saving model to weights/2019-09-27 17-44-01.hdf5
+Epoch 145/1000
+ - 62s - loss: 6.8835e-04 - segmentation_output_loss: 6.8502e-04 - classification_output_loss: 3.3258e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00145: ReduceLROnPlateau reducing learning rate to 1e-08.
+
+Epoch 00145: loss did not improve from 0.00068
+Epoch 146/1000
+ - 63s - loss: 6.8780e-04 - segmentation_output_loss: 6.8477e-04 - classification_output_loss: 3.0270e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00146: loss did not improve from 0.00068
+Epoch 147/1000
+ - 62s - loss: 6.9064e-04 - segmentation_output_loss: 6.8663e-04 - classification_output_loss: 4.0090e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00147: loss did not improve from 0.00068
+Epoch 148/1000
+ - 62s - loss: 6.8128e-04 - segmentation_output_loss: 6.7849e-04 - classification_output_loss: 2.7893e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00148: loss did not improve from 0.00068
+Epoch 149/1000
+ - 62s - loss: 6.8780e-04 - segmentation_output_loss: 6.8484e-04 - classification_output_loss: 2.9619e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00149: loss did not improve from 0.00068
+Epoch 150/1000
+ - 62s - loss: 6.9570e-04 - segmentation_output_loss: 6.9278e-04 - classification_output_loss: 2.9176e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00150: loss did not improve from 0.00068
+Epoch 151/1000
+ - 62s - loss: 6.8179e-04 - segmentation_output_loss: 6.7833e-04 - classification_output_loss: 3.4659e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00151: loss did not improve from 0.00068
+Epoch 152/1000
+ - 62s - loss: 6.8234e-04 - segmentation_output_loss: 6.7915e-04 - classification_output_loss: 3.1855e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00152: loss did not improve from 0.00068
+Epoch 153/1000
+ - 62s - loss: 6.9365e-04 - segmentation_output_loss: 6.9045e-04 - classification_output_loss: 3.2031e-06 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000
+
+Epoch 00153: loss did not improve from 0.00068
+Epoch 154/1000
+ - 62s - loss: 6.8048e-04 - segmentation_output_loss: 6.7736e-04 - classification_output_loss: 3.1108e-06 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000
+
+Epoch 00154: loss did not improve from 0.00068
+Epoch 00154: early stopping
+Finished training
+
+Date and time: 2019-09-27 20-33-28
+

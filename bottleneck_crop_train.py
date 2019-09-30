@@ -4,7 +4,7 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 # In[]: Imports
 import json
@@ -38,7 +38,7 @@ aug = True
 
 num_classes = 1
 
-resize = False
+resize = True
 input_shape = (256, 640, 3) if resize else (512, 1280, 3)
 
 backbone = 'resnet18'
@@ -76,7 +76,7 @@ print("LOG: {}\nAUG: {}\nNUM CLASSES: {}\nRESIZE: {}\nINPUT SHAPE: {}\nBACKBONE:
 
 # In[]:
 dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
-subdirs = ["2019-04-24", "2019-05-08", "2019-05-15"]
+subdirs = ["2019-04-24", "2019-05-08", "2019-05-15", "2019-05-20"]
 
 obj_class_to_machine_color = dataset_dir + "obj_class_to_machine_color.json"
 
