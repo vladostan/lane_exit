@@ -268,3 +268,1222 @@ ________________________________________________________________________________
 decoder_stage2_relu2 (Activatio (None, 64, 160, 32)  0           decoder_stage2_bn2[0][0]         
 __________________________________________________________________________________________________
 decoder_stage2_conv3 (Conv2D)   (None, 64, 160, 64)  2048        decoder_stage2_relu2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage2_bn3 (BatchNormal (None, 64, 160, 64)  256         decoder_stage2_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage2_relu3 (Activatio (None, 64, 160, 64)  0           decoder_stage2_bn3[0][0]         
+__________________________________________________________________________________________________
+add_11 (Add)                    (None, 64, 160, 64)  0           decoder_stage2_relu3[0][0]       
+                                                                 stage2_unit1_relu1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_conv1 (Conv2D)   (None, 64, 160, 16)  1024        add_11[0][0]                     
+__________________________________________________________________________________________________
+decoder_stage3_bn1 (BatchNormal (None, 64, 160, 16)  64          decoder_stage3_conv1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu1 (Activatio (None, 64, 160, 16)  0           decoder_stage3_bn1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_upsample2 (UpSam (None, 128, 320, 16) 0           decoder_stage3_relu1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_conv2 (Conv2D)   (None, 128, 320, 16) 2304        decoder_stage3_upsample2[0][0]   
+__________________________________________________________________________________________________
+decoder_stage3_bn2 (BatchNormal (None, 128, 320, 16) 64          decoder_stage3_conv2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu2 (Activatio (None, 128, 320, 16) 0           decoder_stage3_bn2[0][0]         
+__________________________________________________________________________________________________
+decoder_stage3_conv3 (Conv2D)   (None, 128, 320, 64) 1024        decoder_stage3_relu2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_bn3 (BatchNormal (None, 128, 320, 64) 256         decoder_stage3_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage3_relu3 (Activatio (None, 128, 320, 64) 0           decoder_stage3_bn3[0][0]         
+__________________________________________________________________________________________________
+add_12 (Add)                    (None, 128, 320, 64) 0           decoder_stage3_relu3[0][0]       
+                                                                 relu0[0][0]                      
+__________________________________________________________________________________________________
+decoder_stage4_conv1 (Conv2D)   (None, 128, 320, 16) 1024        add_12[0][0]                     
+__________________________________________________________________________________________________
+decoder_stage4_bn1 (BatchNormal (None, 128, 320, 16) 64          decoder_stage4_conv1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu1 (Activatio (None, 128, 320, 16) 0           decoder_stage4_bn1[0][0]         
+__________________________________________________________________________________________________
+decoder_stage4_upsample2 (UpSam (None, 256, 640, 16) 0           decoder_stage4_relu1[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_conv2 (Conv2D)   (None, 256, 640, 16) 2304        decoder_stage4_upsample2[0][0]   
+__________________________________________________________________________________________________
+decoder_stage4_bn2 (BatchNormal (None, 256, 640, 16) 64          decoder_stage4_conv2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu2 (Activatio (None, 256, 640, 16) 0           decoder_stage4_bn2[0][0]         
+__________________________________________________________________________________________________
+decoder_stage4_conv3 (Conv2D)   (None, 256, 640, 16) 256         decoder_stage4_relu2[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_bn3 (BatchNormal (None, 256, 640, 16) 64          decoder_stage4_conv3[0][0]       
+__________________________________________________________________________________________________
+decoder_stage4_relu3 (Activatio (None, 256, 640, 16) 0           decoder_stage4_bn3[0][0]         
+__________________________________________________________________________________________________
+cropping2d_1 (Cropping2D)       (None, 8, 8, 512)    0           relu1[0][0]                      
+__________________________________________________________________________________________________
+final_conv (Conv2D)             (None, 256, 640, 1)  145         decoder_stage4_relu3[0][0]       
+__________________________________________________________________________________________________
+global_average_pooling2d_1 (Glo (None, 512)          0           cropping2d_1[0][0]               
+__________________________________________________________________________________________________
+segmentation_output (Activation (None, 256, 640, 1)  0           final_conv[0][0]                 
+__________________________________________________________________________________________________
+classification_output (Dense)   (None, 1)            513         global_average_pooling2d_1[0][0] 
+==================================================================================================
+Total params: 11,522,203
+Trainable params: 11,512,181
+Non-trainable params: 10,022
+__________________________________________________________________________________________________
+Callbacks used:
+<keras.callbacks.ReduceLROnPlateau object at 0x7fd42676fcc0>
+<keras.callbacks.EarlyStopping object at 0x7fd4267cbe10>
+<keras.callbacks.CSVLogger object at 0x7fd426737b00>
+<keras.callbacks.ModelCheckpoint object at 0x7fd426737198>
+Steps per epoch: 318
+Starting training...
+
+Epoch 1/1000
+ - 120s - loss: 0.3006 - segmentation_output_loss: 0.0608 - classification_output_loss: 0.2399 - segmentation_output_acc: 0.9006 - classification_output_acc: 0.9277 - val_loss: 0.2629 - val_segmentation_output_loss: 0.0398 - val_classification_output_loss: 0.2231 - val_segmentation_output_acc: 0.9185 - val_classification_output_acc: 0.9210
+
+Epoch 00001: val_loss improved from inf to 0.26286, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 2/1000
+ - 108s - loss: 0.1082 - segmentation_output_loss: 0.0243 - classification_output_loss: 0.0839 - segmentation_output_acc: 0.9499 - classification_output_acc: 0.9744 - val_loss: 0.0687 - val_segmentation_output_loss: 0.0298 - val_classification_output_loss: 0.0389 - val_segmentation_output_acc: 0.9311 - val_classification_output_acc: 1.0000
+
+Epoch 00002: val_loss improved from 0.26286 to 0.06868, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 3/1000
+ - 94s - loss: 0.0501 - segmentation_output_loss: 0.0191 - classification_output_loss: 0.0310 - segmentation_output_acc: 0.9575 - classification_output_acc: 0.9886 - val_loss: 0.0789 - val_segmentation_output_loss: 0.0261 - val_classification_output_loss: 0.0529 - val_segmentation_output_acc: 0.9378 - val_classification_output_acc: 0.9853
+
+Epoch 00003: val_loss did not improve from 0.06868
+Epoch 4/1000
+ - 94s - loss: 0.0273 - segmentation_output_loss: 0.0164 - classification_output_loss: 0.0109 - segmentation_output_acc: 0.9626 - classification_output_acc: 0.9961 - val_loss: 0.0656 - val_segmentation_output_loss: 0.0228 - val_classification_output_loss: 0.0428 - val_segmentation_output_acc: 0.9461 - val_classification_output_acc: 0.9816
+
+Epoch 00004: val_loss improved from 0.06868 to 0.06561, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 5/1000
+ - 94s - loss: 0.0705 - segmentation_output_loss: 0.0170 - classification_output_loss: 0.0535 - segmentation_output_acc: 0.9602 - classification_output_acc: 0.9819 - val_loss: 0.0609 - val_segmentation_output_loss: 0.0225 - val_classification_output_loss: 0.0384 - val_segmentation_output_acc: 0.9448 - val_classification_output_acc: 0.9853
+
+Epoch 00005: val_loss improved from 0.06561 to 0.06086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 6/1000
+ - 93s - loss: 0.0253 - segmentation_output_loss: 0.0146 - classification_output_loss: 0.0107 - segmentation_output_acc: 0.9659 - classification_output_acc: 0.9965 - val_loss: 0.0239 - val_segmentation_output_loss: 0.0193 - val_classification_output_loss: 0.0046 - val_segmentation_output_acc: 0.9543 - val_classification_output_acc: 1.0000
+
+Epoch 00006: val_loss improved from 0.06086 to 0.02392, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 7/1000
+ - 93s - loss: 0.0172 - segmentation_output_loss: 0.0126 - classification_output_loss: 0.0045 - segmentation_output_acc: 0.9703 - classification_output_acc: 0.9980 - val_loss: 0.0218 - val_segmentation_output_loss: 0.0174 - val_classification_output_loss: 0.0044 - val_segmentation_output_acc: 0.9593 - val_classification_output_acc: 1.0000
+
+Epoch 00007: val_loss improved from 0.02392 to 0.02180, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 8/1000
+ - 95s - loss: 0.0441 - segmentation_output_loss: 0.0128 - classification_output_loss: 0.0314 - segmentation_output_acc: 0.9697 - classification_output_acc: 0.9902 - val_loss: 0.1047 - val_segmentation_output_loss: 0.0191 - val_classification_output_loss: 0.0856 - val_segmentation_output_acc: 0.9546 - val_classification_output_acc: 0.9706
+
+Epoch 00008: val_loss did not improve from 0.02180
+Epoch 9/1000
+ - 94s - loss: 0.0258 - segmentation_output_loss: 0.0122 - classification_output_loss: 0.0137 - segmentation_output_acc: 0.9711 - classification_output_acc: 0.9965 - val_loss: 0.0199 - val_segmentation_output_loss: 0.0164 - val_classification_output_loss: 0.0035 - val_segmentation_output_acc: 0.9614 - val_classification_output_acc: 1.0000
+
+Epoch 00009: val_loss improved from 0.02180 to 0.01992, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 10/1000
+ - 93s - loss: 0.0146 - segmentation_output_loss: 0.0107 - classification_output_loss: 0.0039 - segmentation_output_acc: 0.9747 - classification_output_acc: 0.9992 - val_loss: 0.0194 - val_segmentation_output_loss: 0.0135 - val_classification_output_loss: 0.0059 - val_segmentation_output_acc: 0.9692 - val_classification_output_acc: 0.9963
+
+Epoch 00010: val_loss improved from 0.01992 to 0.01938, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 11/1000
+ - 93s - loss: 0.0240 - segmentation_output_loss: 0.0101 - classification_output_loss: 0.0139 - segmentation_output_acc: 0.9762 - classification_output_acc: 0.9972 - val_loss: 0.1231 - val_segmentation_output_loss: 0.0175 - val_classification_output_loss: 0.1055 - val_segmentation_output_acc: 0.9595 - val_classification_output_acc: 0.9669
+
+Epoch 00011: val_loss did not improve from 0.01938
+Epoch 12/1000
+ - 94s - loss: 0.0733 - segmentation_output_loss: 0.0126 - classification_output_loss: 0.0606 - segmentation_output_acc: 0.9696 - classification_output_acc: 0.9780 - val_loss: 0.0475 - val_segmentation_output_loss: 0.0141 - val_classification_output_loss: 0.0334 - val_segmentation_output_acc: 0.9681 - val_classification_output_acc: 0.9890
+
+Epoch 00012: val_loss did not improve from 0.01938
+Epoch 13/1000
+ - 94s - loss: 0.0356 - segmentation_output_loss: 0.0113 - classification_output_loss: 0.0243 - segmentation_output_acc: 0.9729 - classification_output_acc: 0.9906 - val_loss: 0.0352 - val_segmentation_output_loss: 0.0130 - val_classification_output_loss: 0.0222 - val_segmentation_output_acc: 0.9702 - val_classification_output_acc: 0.9926
+
+Epoch 00013: val_loss did not improve from 0.01938
+Epoch 14/1000
+ - 93s - loss: 0.0174 - segmentation_output_loss: 0.0097 - classification_output_loss: 0.0078 - segmentation_output_acc: 0.9770 - classification_output_acc: 0.9965 - val_loss: 0.0125 - val_segmentation_output_loss: 0.0116 - val_classification_output_loss: 9.3350e-04 - val_segmentation_output_acc: 0.9736 - val_classification_output_acc: 1.0000
+
+Epoch 00014: val_loss improved from 0.01938 to 0.01252, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 15/1000
+ - 93s - loss: 0.0115 - segmentation_output_loss: 0.0085 - classification_output_loss: 0.0030 - segmentation_output_acc: 0.9799 - classification_output_acc: 0.9988 - val_loss: 0.0121 - val_segmentation_output_loss: 0.0116 - val_classification_output_loss: 5.4028e-04 - val_segmentation_output_acc: 0.9744 - val_classification_output_acc: 1.0000
+
+Epoch 00015: val_loss improved from 0.01252 to 0.01213, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 16/1000
+ - 94s - loss: 0.0083 - segmentation_output_loss: 0.0075 - classification_output_loss: 8.3611e-04 - segmentation_output_acc: 0.9822 - classification_output_acc: 0.9996 - val_loss: 0.0090 - val_segmentation_output_loss: 0.0085 - val_classification_output_loss: 4.2872e-04 - val_segmentation_output_acc: 0.9805 - val_classification_output_acc: 1.0000
+
+Epoch 00016: val_loss improved from 0.01213 to 0.00896, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 17/1000
+ - 92s - loss: 0.0069 - segmentation_output_loss: 0.0065 - classification_output_loss: 3.1806e-04 - segmentation_output_acc: 0.9845 - classification_output_acc: 1.0000 - val_loss: 0.0083 - val_segmentation_output_loss: 0.0076 - val_classification_output_loss: 6.1560e-04 - val_segmentation_output_acc: 0.9821 - val_classification_output_acc: 1.0000
+
+Epoch 00017: val_loss improved from 0.00896 to 0.00825, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 18/1000
+ - 94s - loss: 0.0265 - segmentation_output_loss: 0.0076 - classification_output_loss: 0.0188 - segmentation_output_acc: 0.9818 - classification_output_acc: 0.9957 - val_loss: 0.0306 - val_segmentation_output_loss: 0.0091 - val_classification_output_loss: 0.0215 - val_segmentation_output_acc: 0.9785 - val_classification_output_acc: 0.9963
+
+Epoch 00018: val_loss did not improve from 0.00825
+Epoch 19/1000
+ - 93s - loss: 0.0214 - segmentation_output_loss: 0.0084 - classification_output_loss: 0.0130 - segmentation_output_acc: 0.9798 - classification_output_acc: 0.9961 - val_loss: 0.0282 - val_segmentation_output_loss: 0.0110 - val_classification_output_loss: 0.0171 - val_segmentation_output_acc: 0.9748 - val_classification_output_acc: 0.9926
+
+Epoch 00019: val_loss did not improve from 0.00825
+Epoch 20/1000
+ - 94s - loss: 0.0319 - segmentation_output_loss: 0.0096 - classification_output_loss: 0.0224 - segmentation_output_acc: 0.9771 - classification_output_acc: 0.9921 - val_loss: 0.2350 - val_segmentation_output_loss: 0.0160 - val_classification_output_loss: 0.2190 - val_segmentation_output_acc: 0.9638 - val_classification_output_acc: 0.9191
+
+Epoch 00020: val_loss did not improve from 0.00825
+Epoch 21/1000
+ - 94s - loss: 0.0304 - segmentation_output_loss: 0.0093 - classification_output_loss: 0.0211 - segmentation_output_acc: 0.9776 - classification_output_acc: 0.9929 - val_loss: 0.0533 - val_segmentation_output_loss: 0.0110 - val_classification_output_loss: 0.0424 - val_segmentation_output_acc: 0.9737 - val_classification_output_acc: 0.9816
+
+Epoch 00021: val_loss did not improve from 0.00825
+Epoch 22/1000
+ - 93s - loss: 0.0295 - segmentation_output_loss: 0.0088 - classification_output_loss: 0.0207 - segmentation_output_acc: 0.9791 - classification_output_acc: 0.9937 - val_loss: 0.0522 - val_segmentation_output_loss: 0.0086 - val_classification_output_loss: 0.0436 - val_segmentation_output_acc: 0.9802 - val_classification_output_acc: 0.9853
+
+Epoch 00022: ReduceLROnPlateau reducing learning rate to 4.999999873689376e-05.
+
+Epoch 00022: val_loss did not improve from 0.00825
+Epoch 23/1000
+ - 93s - loss: 0.0204 - segmentation_output_loss: 0.0075 - classification_output_loss: 0.0128 - segmentation_output_acc: 0.9820 - classification_output_acc: 0.9957 - val_loss: 0.0099 - val_segmentation_output_loss: 0.0077 - val_classification_output_loss: 0.0022 - val_segmentation_output_acc: 0.9820 - val_classification_output_acc: 1.0000
+
+Epoch 00023: val_loss did not improve from 0.00825
+Epoch 24/1000
+ - 94s - loss: 0.0077 - segmentation_output_loss: 0.0067 - classification_output_loss: 0.0010 - segmentation_output_acc: 0.9841 - classification_output_acc: 1.0000 - val_loss: 0.0070 - val_segmentation_output_loss: 0.0065 - val_classification_output_loss: 5.3905e-04 - val_segmentation_output_acc: 0.9845 - val_classification_output_acc: 1.0000
+
+Epoch 00024: val_loss improved from 0.00825 to 0.00704, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 25/1000
+ - 94s - loss: 0.0061 - segmentation_output_loss: 0.0059 - classification_output_loss: 2.3494e-04 - segmentation_output_acc: 0.9861 - classification_output_acc: 1.0000 - val_loss: 0.0064 - val_segmentation_output_loss: 0.0060 - val_classification_output_loss: 4.1276e-04 - val_segmentation_output_acc: 0.9858 - val_classification_output_acc: 1.0000
+
+Epoch 00025: val_loss improved from 0.00704 to 0.00637, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 26/1000
+ - 94s - loss: 0.0058 - segmentation_output_loss: 0.0054 - classification_output_loss: 4.5864e-04 - segmentation_output_acc: 0.9872 - classification_output_acc: 1.0000 - val_loss: 0.0063 - val_segmentation_output_loss: 0.0061 - val_classification_output_loss: 2.6867e-04 - val_segmentation_output_acc: 0.9855 - val_classification_output_acc: 1.0000
+
+Epoch 00026: val_loss improved from 0.00637 to 0.00634, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 27/1000
+ - 94s - loss: 0.0051 - segmentation_output_loss: 0.0049 - classification_output_loss: 2.1014e-04 - segmentation_output_acc: 0.9883 - classification_output_acc: 1.0000 - val_loss: 0.0056 - val_segmentation_output_loss: 0.0055 - val_classification_output_loss: 1.5740e-04 - val_segmentation_output_acc: 0.9872 - val_classification_output_acc: 1.0000
+
+Epoch 00027: val_loss improved from 0.00634 to 0.00561, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 28/1000
+ - 94s - loss: 0.0048 - segmentation_output_loss: 0.0047 - classification_output_loss: 1.3797e-04 - segmentation_output_acc: 0.9888 - classification_output_acc: 1.0000 - val_loss: 0.0055 - val_segmentation_output_loss: 0.0054 - val_classification_output_loss: 1.2318e-04 - val_segmentation_output_acc: 0.9872 - val_classification_output_acc: 1.0000
+
+Epoch 00028: val_loss improved from 0.00561 to 0.00549, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 29/1000
+ - 94s - loss: 0.0045 - segmentation_output_loss: 0.0044 - classification_output_loss: 1.1416e-04 - segmentation_output_acc: 0.9896 - classification_output_acc: 1.0000 - val_loss: 0.0054 - val_segmentation_output_loss: 0.0053 - val_classification_output_loss: 9.4257e-05 - val_segmentation_output_acc: 0.9873 - val_classification_output_acc: 1.0000
+
+Epoch 00029: val_loss improved from 0.00549 to 0.00541, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 30/1000
+ - 94s - loss: 0.0043 - segmentation_output_loss: 0.0042 - classification_output_loss: 7.0944e-05 - segmentation_output_acc: 0.9900 - classification_output_acc: 1.0000 - val_loss: 0.0048 - val_segmentation_output_loss: 0.0047 - val_classification_output_loss: 7.7132e-05 - val_segmentation_output_acc: 0.9886 - val_classification_output_acc: 1.0000
+
+Epoch 00030: val_loss improved from 0.00541 to 0.00482, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 31/1000
+ - 95s - loss: 0.0041 - segmentation_output_loss: 0.0040 - classification_output_loss: 7.4125e-05 - segmentation_output_acc: 0.9904 - classification_output_acc: 1.0000 - val_loss: 0.0051 - val_segmentation_output_loss: 0.0051 - val_classification_output_loss: 6.2824e-05 - val_segmentation_output_acc: 0.9880 - val_classification_output_acc: 1.0000
+
+Epoch 00031: val_loss did not improve from 0.00482
+Epoch 32/1000
+ - 94s - loss: 0.0039 - segmentation_output_loss: 0.0038 - classification_output_loss: 6.0410e-05 - segmentation_output_acc: 0.9908 - classification_output_acc: 1.0000 - val_loss: 0.0048 - val_segmentation_output_loss: 0.0048 - val_classification_output_loss: 5.8985e-05 - val_segmentation_output_acc: 0.9884 - val_classification_output_acc: 1.0000
+
+Epoch 00032: val_loss did not improve from 0.00482
+Epoch 33/1000
+ - 94s - loss: 0.0037 - segmentation_output_loss: 0.0037 - classification_output_loss: 3.4662e-05 - segmentation_output_acc: 0.9912 - classification_output_acc: 1.0000 - val_loss: 0.0046 - val_segmentation_output_loss: 0.0045 - val_classification_output_loss: 5.5241e-05 - val_segmentation_output_acc: 0.9892 - val_classification_output_acc: 1.0000
+
+Epoch 00033: val_loss improved from 0.00482 to 0.00458, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 34/1000
+ - 93s - loss: 0.0035 - segmentation_output_loss: 0.0035 - classification_output_loss: 4.1208e-05 - segmentation_output_acc: 0.9916 - classification_output_acc: 1.0000 - val_loss: 0.0041 - val_segmentation_output_loss: 0.0041 - val_classification_output_loss: 4.9309e-05 - val_segmentation_output_acc: 0.9905 - val_classification_output_acc: 1.0000
+
+Epoch 00034: val_loss improved from 0.00458 to 0.00414, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 35/1000
+ - 94s - loss: 0.0034 - segmentation_output_loss: 0.0034 - classification_output_loss: 3.1149e-05 - segmentation_output_acc: 0.9918 - classification_output_acc: 1.0000 - val_loss: 0.0048 - val_segmentation_output_loss: 0.0047 - val_classification_output_loss: 4.0339e-05 - val_segmentation_output_acc: 0.9889 - val_classification_output_acc: 1.0000
+
+Epoch 00035: val_loss did not improve from 0.00414
+Epoch 36/1000
+ - 95s - loss: 0.0033 - segmentation_output_loss: 0.0033 - classification_output_loss: 3.1020e-05 - segmentation_output_acc: 0.9920 - classification_output_acc: 1.0000 - val_loss: 0.0042 - val_segmentation_output_loss: 0.0041 - val_classification_output_loss: 4.0924e-05 - val_segmentation_output_acc: 0.9902 - val_classification_output_acc: 1.0000
+
+Epoch 00036: val_loss did not improve from 0.00414
+Epoch 37/1000
+ - 94s - loss: 0.0032 - segmentation_output_loss: 0.0032 - classification_output_loss: 3.0128e-05 - segmentation_output_acc: 0.9924 - classification_output_acc: 1.0000 - val_loss: 0.0042 - val_segmentation_output_loss: 0.0042 - val_classification_output_loss: 3.5178e-05 - val_segmentation_output_acc: 0.9902 - val_classification_output_acc: 1.0000
+
+Epoch 00037: val_loss did not improve from 0.00414
+Epoch 38/1000
+ - 94s - loss: 0.0031 - segmentation_output_loss: 0.0031 - classification_output_loss: 2.6125e-05 - segmentation_output_acc: 0.9925 - classification_output_acc: 1.0000 - val_loss: 0.0037 - val_segmentation_output_loss: 0.0037 - val_classification_output_loss: 3.7583e-05 - val_segmentation_output_acc: 0.9915 - val_classification_output_acc: 1.0000
+
+Epoch 00038: val_loss improved from 0.00414 to 0.00372, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 39/1000
+ - 95s - loss: 0.0031 - segmentation_output_loss: 0.0031 - classification_output_loss: 2.1965e-05 - segmentation_output_acc: 0.9925 - classification_output_acc: 1.0000 - val_loss: 0.0050 - val_segmentation_output_loss: 0.0050 - val_classification_output_loss: 3.0483e-05 - val_segmentation_output_acc: 0.9882 - val_classification_output_acc: 1.0000
+
+Epoch 00039: val_loss did not improve from 0.00372
+Epoch 40/1000
+ - 95s - loss: 0.0030 - segmentation_output_loss: 0.0030 - classification_output_loss: 4.2425e-05 - segmentation_output_acc: 0.9928 - classification_output_acc: 1.0000 - val_loss: 0.0041 - val_segmentation_output_loss: 0.0040 - val_classification_output_loss: 3.0461e-05 - val_segmentation_output_acc: 0.9902 - val_classification_output_acc: 1.0000
+
+Epoch 00040: val_loss did not improve from 0.00372
+Epoch 41/1000
+ - 95s - loss: 0.0028 - segmentation_output_loss: 0.0028 - classification_output_loss: 1.9683e-05 - segmentation_output_acc: 0.9932 - classification_output_acc: 1.0000 - val_loss: 0.0039 - val_segmentation_output_loss: 0.0039 - val_classification_output_loss: 2.8390e-05 - val_segmentation_output_acc: 0.9905 - val_classification_output_acc: 1.0000
+
+Epoch 00041: val_loss did not improve from 0.00372
+Epoch 42/1000
+ - 89s - loss: 0.0027 - segmentation_output_loss: 0.0027 - classification_output_loss: 1.6505e-05 - segmentation_output_acc: 0.9934 - classification_output_acc: 1.0000 - val_loss: 0.0044 - val_segmentation_output_loss: 0.0043 - val_classification_output_loss: 2.1761e-05 - val_segmentation_output_acc: 0.9894 - val_classification_output_acc: 1.0000
+
+Epoch 00042: val_loss did not improve from 0.00372
+Epoch 43/1000
+ - 87s - loss: 0.0027 - segmentation_output_loss: 0.0027 - classification_output_loss: 1.3154e-05 - segmentation_output_acc: 0.9936 - classification_output_acc: 1.0000 - val_loss: 0.0036 - val_segmentation_output_loss: 0.0036 - val_classification_output_loss: 1.9478e-05 - val_segmentation_output_acc: 0.9915 - val_classification_output_acc: 1.0000
+
+Epoch 00043: val_loss improved from 0.00372 to 0.00359, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 44/1000
+ - 94s - loss: 0.0027 - segmentation_output_loss: 0.0026 - classification_output_loss: 1.2354e-05 - segmentation_output_acc: 0.9936 - classification_output_acc: 1.0000 - val_loss: 0.0032 - val_segmentation_output_loss: 0.0032 - val_classification_output_loss: 1.9653e-05 - val_segmentation_output_acc: 0.9922 - val_classification_output_acc: 1.0000
+
+Epoch 00044: val_loss improved from 0.00359 to 0.00325, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 45/1000
+ - 88s - loss: 0.0025 - segmentation_output_loss: 0.0025 - classification_output_loss: 1.2268e-05 - segmentation_output_acc: 0.9939 - classification_output_acc: 1.0000 - val_loss: 0.0038 - val_segmentation_output_loss: 0.0037 - val_classification_output_loss: 1.6964e-05 - val_segmentation_output_acc: 0.9912 - val_classification_output_acc: 1.0000
+
+Epoch 00045: val_loss did not improve from 0.00325
+Epoch 46/1000
+ - 88s - loss: 0.0026 - segmentation_output_loss: 0.0026 - classification_output_loss: 1.8625e-05 - segmentation_output_acc: 0.9936 - classification_output_acc: 1.0000 - val_loss: 0.0033 - val_segmentation_output_loss: 0.0033 - val_classification_output_loss: 1.5871e-05 - val_segmentation_output_acc: 0.9922 - val_classification_output_acc: 1.0000
+
+Epoch 00046: val_loss did not improve from 0.00325
+Epoch 47/1000
+ - 89s - loss: 0.0025 - segmentation_output_loss: 0.0025 - classification_output_loss: 1.0625e-05 - segmentation_output_acc: 0.9939 - classification_output_acc: 1.0000 - val_loss: 0.0033 - val_segmentation_output_loss: 0.0033 - val_classification_output_loss: 1.0962e-05 - val_segmentation_output_acc: 0.9920 - val_classification_output_acc: 1.0000
+
+Epoch 00047: val_loss did not improve from 0.00325
+Epoch 48/1000
+ - 91s - loss: 0.0023 - segmentation_output_loss: 0.0023 - classification_output_loss: 1.2458e-05 - segmentation_output_acc: 0.9943 - classification_output_acc: 1.0000 - val_loss: 0.0029 - val_segmentation_output_loss: 0.0029 - val_classification_output_loss: 1.2086e-05 - val_segmentation_output_acc: 0.9933 - val_classification_output_acc: 1.0000
+
+Epoch 00048: val_loss improved from 0.00325 to 0.00292, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 49/1000
+ - 94s - loss: 0.0024 - segmentation_output_loss: 0.0023 - classification_output_loss: 1.0103e-05 - segmentation_output_acc: 0.9943 - classification_output_acc: 1.0000 - val_loss: 0.0029 - val_segmentation_output_loss: 0.0029 - val_classification_output_loss: 2.0506e-05 - val_segmentation_output_acc: 0.9930 - val_classification_output_acc: 1.0000
+
+Epoch 00049: val_loss improved from 0.00292 to 0.00292, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 50/1000
+ - 95s - loss: 0.0024 - segmentation_output_loss: 0.0024 - classification_output_loss: 2.9821e-05 - segmentation_output_acc: 0.9942 - classification_output_acc: 1.0000 - val_loss: 0.0035 - val_segmentation_output_loss: 0.0035 - val_classification_output_loss: 1.2067e-05 - val_segmentation_output_acc: 0.9914 - val_classification_output_acc: 1.0000
+
+Epoch 00050: val_loss did not improve from 0.00292
+Epoch 51/1000
+ - 94s - loss: 0.0023 - segmentation_output_loss: 0.0023 - classification_output_loss: 2.2915e-05 - segmentation_output_acc: 0.9944 - classification_output_acc: 1.0000 - val_loss: 0.0028 - val_segmentation_output_loss: 0.0028 - val_classification_output_loss: 2.1941e-05 - val_segmentation_output_acc: 0.9933 - val_classification_output_acc: 1.0000
+
+Epoch 00051: val_loss improved from 0.00292 to 0.00284, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 52/1000
+ - 95s - loss: 0.0026 - segmentation_output_loss: 0.0026 - classification_output_loss: 1.0648e-05 - segmentation_output_acc: 0.9938 - classification_output_acc: 1.0000 - val_loss: 0.0033 - val_segmentation_output_loss: 0.0033 - val_classification_output_loss: 1.3047e-05 - val_segmentation_output_acc: 0.9923 - val_classification_output_acc: 1.0000
+
+Epoch 00052: val_loss did not improve from 0.00284
+Epoch 53/1000
+ - 95s - loss: 0.0023 - segmentation_output_loss: 0.0023 - classification_output_loss: 8.3849e-06 - segmentation_output_acc: 0.9943 - classification_output_acc: 1.0000 - val_loss: 0.0027 - val_segmentation_output_loss: 0.0027 - val_classification_output_loss: 6.5652e-06 - val_segmentation_output_acc: 0.9936 - val_classification_output_acc: 1.0000
+
+Epoch 00053: val_loss improved from 0.00284 to 0.00272, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 54/1000
+ - 92s - loss: 0.0022 - segmentation_output_loss: 0.0022 - classification_output_loss: 6.7511e-06 - segmentation_output_acc: 0.9948 - classification_output_acc: 1.0000 - val_loss: 0.0024 - val_segmentation_output_loss: 0.0024 - val_classification_output_loss: 6.6605e-06 - val_segmentation_output_acc: 0.9941 - val_classification_output_acc: 1.0000
+
+Epoch 00054: val_loss improved from 0.00272 to 0.00243, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 55/1000
+ - 87s - loss: 0.0020 - segmentation_output_loss: 0.0020 - classification_output_loss: 4.4266e-06 - segmentation_output_acc: 0.9951 - classification_output_acc: 1.0000 - val_loss: 0.0025 - val_segmentation_output_loss: 0.0025 - val_classification_output_loss: 4.9210e-06 - val_segmentation_output_acc: 0.9939 - val_classification_output_acc: 1.0000
+
+Epoch 00055: val_loss did not improve from 0.00243
+Epoch 56/1000
+ - 89s - loss: 0.0020 - segmentation_output_loss: 0.0020 - classification_output_loss: 1.1641e-05 - segmentation_output_acc: 0.9951 - classification_output_acc: 1.0000 - val_loss: 0.0024 - val_segmentation_output_loss: 0.0024 - val_classification_output_loss: 3.3182e-06 - val_segmentation_output_acc: 0.9943 - val_classification_output_acc: 1.0000
+
+Epoch 00056: val_loss improved from 0.00243 to 0.00238, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 57/1000
+ - 87s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 3.4811e-06 - segmentation_output_acc: 0.9954 - classification_output_acc: 1.0000 - val_loss: 0.0023 - val_segmentation_output_loss: 0.0023 - val_classification_output_loss: 2.7603e-06 - val_segmentation_output_acc: 0.9943 - val_classification_output_acc: 1.0000
+
+Epoch 00057: val_loss improved from 0.00238 to 0.00234, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 58/1000
+ - 92s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 2.8117e-06 - segmentation_output_acc: 0.9953 - classification_output_acc: 1.0000 - val_loss: 0.0024 - val_segmentation_output_loss: 0.0024 - val_classification_output_loss: 6.8252e-06 - val_segmentation_output_acc: 0.9941 - val_classification_output_acc: 1.0000
+
+Epoch 00058: val_loss did not improve from 0.00234
+Epoch 59/1000
+ - 94s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 2.3798e-06 - segmentation_output_acc: 0.9952 - classification_output_acc: 1.0000 - val_loss: 0.0023 - val_segmentation_output_loss: 0.0023 - val_classification_output_loss: 2.1669e-06 - val_segmentation_output_acc: 0.9944 - val_classification_output_acc: 1.0000
+
+Epoch 00059: val_loss improved from 0.00234 to 0.00230, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 60/1000
+ - 95s - loss: 0.0019 - segmentation_output_loss: 0.0019 - classification_output_loss: 3.7040e-06 - segmentation_output_acc: 0.9953 - classification_output_acc: 1.0000 - val_loss: 0.0025 - val_segmentation_output_loss: 0.0025 - val_classification_output_loss: 2.6767e-06 - val_segmentation_output_acc: 0.9941 - val_classification_output_acc: 1.0000
+
+Epoch 00060: val_loss did not improve from 0.00230
+Epoch 61/1000
+ - 94s - loss: 0.0018 - segmentation_output_loss: 0.0018 - classification_output_loss: 2.8938e-06 - segmentation_output_acc: 0.9957 - classification_output_acc: 1.0000 - val_loss: 0.0022 - val_segmentation_output_loss: 0.0022 - val_classification_output_loss: 5.0977e-06 - val_segmentation_output_acc: 0.9948 - val_classification_output_acc: 1.0000
+
+Epoch 00061: val_loss improved from 0.00230 to 0.00218, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 62/1000
+ - 94s - loss: 0.0017 - segmentation_output_loss: 0.0017 - classification_output_loss: 2.2347e-06 - segmentation_output_acc: 0.9959 - classification_output_acc: 1.0000 - val_loss: 0.0020 - val_segmentation_output_loss: 0.0020 - val_classification_output_loss: 3.6519e-06 - val_segmentation_output_acc: 0.9953 - val_classification_output_acc: 1.0000
+
+Epoch 00062: val_loss improved from 0.00218 to 0.00200, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 63/1000
+ - 95s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 1.8813e-06 - segmentation_output_acc: 0.9960 - classification_output_acc: 1.0000 - val_loss: 0.0020 - val_segmentation_output_loss: 0.0020 - val_classification_output_loss: 2.6888e-06 - val_segmentation_output_acc: 0.9952 - val_classification_output_acc: 1.0000
+
+Epoch 00063: val_loss did not improve from 0.00200
+Epoch 64/1000
+ - 95s - loss: 0.0017 - segmentation_output_loss: 0.0017 - classification_output_loss: 3.3384e-06 - segmentation_output_acc: 0.9958 - classification_output_acc: 1.0000 - val_loss: 0.0020 - val_segmentation_output_loss: 0.0020 - val_classification_output_loss: 3.3314e-06 - val_segmentation_output_acc: 0.9952 - val_classification_output_acc: 1.0000
+
+Epoch 00064: val_loss improved from 0.00200 to 0.00199, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 65/1000
+ - 95s - loss: 0.0017 - segmentation_output_loss: 0.0017 - classification_output_loss: 2.5686e-06 - segmentation_output_acc: 0.9959 - classification_output_acc: 1.0000 - val_loss: 0.0020 - val_segmentation_output_loss: 0.0020 - val_classification_output_loss: 3.0307e-06 - val_segmentation_output_acc: 0.9951 - val_classification_output_acc: 1.0000
+
+Epoch 00065: val_loss did not improve from 0.00199
+Epoch 66/1000
+ - 98s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 7.8704e-06 - segmentation_output_acc: 0.9961 - classification_output_acc: 1.0000 - val_loss: 0.0018 - val_segmentation_output_loss: 0.0018 - val_classification_output_loss: 2.2477e-06 - val_segmentation_output_acc: 0.9957 - val_classification_output_acc: 1.0000
+
+Epoch 00066: val_loss improved from 0.00199 to 0.00176, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 67/1000
+ - 95s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 4.8077e-06 - segmentation_output_acc: 0.9960 - classification_output_acc: 1.0000 - val_loss: 0.0021 - val_segmentation_output_loss: 0.0021 - val_classification_output_loss: 6.3695e-06 - val_segmentation_output_acc: 0.9949 - val_classification_output_acc: 1.0000
+
+Epoch 00067: val_loss did not improve from 0.00176
+Epoch 68/1000
+ - 95s - loss: 0.0016 - segmentation_output_loss: 0.0016 - classification_output_loss: 2.7564e-06 - segmentation_output_acc: 0.9960 - classification_output_acc: 1.0000 - val_loss: 0.0018 - val_segmentation_output_loss: 0.0018 - val_classification_output_loss: 2.9286e-06 - val_segmentation_output_acc: 0.9956 - val_classification_output_acc: 1.0000
+
+Epoch 00068: val_loss did not improve from 0.00176
+Epoch 69/1000
+ - 94s - loss: 0.0015 - segmentation_output_loss: 0.0015 - classification_output_loss: 1.7204e-06 - segmentation_output_acc: 0.9963 - classification_output_acc: 1.0000 - val_loss: 0.0018 - val_segmentation_output_loss: 0.0018 - val_classification_output_loss: 2.0809e-06 - val_segmentation_output_acc: 0.9955 - val_classification_output_acc: 1.0000
+
+Epoch 00069: val_loss did not improve from 0.00176
+Epoch 70/1000
+ - 94s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 1.4263e-06 - segmentation_output_acc: 0.9965 - classification_output_acc: 1.0000 - val_loss: 0.0018 - val_segmentation_output_loss: 0.0018 - val_classification_output_loss: 3.8480e-06 - val_segmentation_output_acc: 0.9955 - val_classification_output_acc: 1.0000
+
+Epoch 00070: val_loss did not improve from 0.00176
+Epoch 71/1000
+ - 95s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 1.0197e-06 - segmentation_output_acc: 0.9965 - classification_output_acc: 1.0000 - val_loss: 0.0020 - val_segmentation_output_loss: 0.0020 - val_classification_output_loss: 9.9193e-07 - val_segmentation_output_acc: 0.9952 - val_classification_output_acc: 1.0000
+
+Epoch 00071: ReduceLROnPlateau reducing learning rate to 2.499999936844688e-05.
+
+Epoch 00071: val_loss did not improve from 0.00176
+Epoch 72/1000
+ - 96s - loss: 0.0014 - segmentation_output_loss: 0.0014 - classification_output_loss: 1.1895e-06 - segmentation_output_acc: 0.9965 - classification_output_acc: 1.0000 - val_loss: 0.0014 - val_segmentation_output_loss: 0.0014 - val_classification_output_loss: 1.3848e-06 - val_segmentation_output_acc: 0.9964 - val_classification_output_acc: 1.0000
+
+Epoch 00072: val_loss improved from 0.00176 to 0.00145, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 73/1000
+ - 96s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 8.4192e-07 - segmentation_output_acc: 0.9972 - classification_output_acc: 1.0000 - val_loss: 0.0014 - val_segmentation_output_loss: 0.0014 - val_classification_output_loss: 1.4622e-06 - val_segmentation_output_acc: 0.9964 - val_classification_output_acc: 1.0000
+
+Epoch 00073: val_loss improved from 0.00145 to 0.00142, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 74/1000
+ - 96s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 1.3351e-06 - segmentation_output_acc: 0.9974 - classification_output_acc: 1.0000 - val_loss: 0.0013 - val_segmentation_output_loss: 0.0013 - val_classification_output_loss: 1.1671e-06 - val_segmentation_output_acc: 0.9967 - val_classification_output_acc: 1.0000
+
+Epoch 00074: val_loss improved from 0.00142 to 0.00133, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 75/1000
+ - 96s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 6.5677e-07 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000 - val_loss: 0.0013 - val_segmentation_output_loss: 0.0013 - val_classification_output_loss: 1.2430e-06 - val_segmentation_output_acc: 0.9969 - val_classification_output_acc: 1.0000
+
+Epoch 00075: val_loss improved from 0.00133 to 0.00127, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 76/1000
+ - 94s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 2.1639e-06 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000 - val_loss: 0.0014 - val_segmentation_output_loss: 0.0014 - val_classification_output_loss: 9.0114e-07 - val_segmentation_output_acc: 0.9966 - val_classification_output_acc: 1.0000
+
+Epoch 00076: val_loss did not improve from 0.00127
+Epoch 77/1000
+ - 95s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 6.9958e-07 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000 - val_loss: 0.0014 - val_segmentation_output_loss: 0.0014 - val_classification_output_loss: 1.0603e-06 - val_segmentation_output_acc: 0.9965 - val_classification_output_acc: 1.0000
+
+Epoch 00077: val_loss did not improve from 0.00127
+Epoch 78/1000
+ - 94s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 8.2686e-07 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000 - val_loss: 0.0015 - val_segmentation_output_loss: 0.0015 - val_classification_output_loss: 1.4322e-06 - val_segmentation_output_acc: 0.9964 - val_classification_output_acc: 1.0000
+
+Epoch 00078: val_loss did not improve from 0.00127
+Epoch 79/1000
+ - 94s - loss: 0.0010 - segmentation_output_loss: 0.0010 - classification_output_loss: 4.9599e-07 - segmentation_output_acc: 0.9975 - classification_output_acc: 1.0000 - val_loss: 0.0017 - val_segmentation_output_loss: 0.0017 - val_classification_output_loss: 8.6340e-07 - val_segmentation_output_acc: 0.9960 - val_classification_output_acc: 1.0000
+
+Epoch 00079: ReduceLROnPlateau reducing learning rate to 1.249999968422344e-05.
+
+Epoch 00079: val_loss did not improve from 0.00127
+Epoch 80/1000
+ - 95s - loss: 0.0011 - segmentation_output_loss: 0.0011 - classification_output_loss: 6.2082e-07 - segmentation_output_acc: 0.9974 - classification_output_acc: 1.0000 - val_loss: 0.0014 - val_segmentation_output_loss: 0.0014 - val_classification_output_loss: 9.3694e-07 - val_segmentation_output_acc: 0.9966 - val_classification_output_acc: 1.0000
+
+Epoch 00080: val_loss did not improve from 0.00127
+Epoch 81/1000
+ - 95s - loss: 9.3666e-04 - segmentation_output_loss: 9.3584e-04 - classification_output_loss: 8.2045e-07 - segmentation_output_acc: 0.9977 - classification_output_acc: 1.0000 - val_loss: 0.0013 - val_segmentation_output_loss: 0.0013 - val_classification_output_loss: 1.0083e-06 - val_segmentation_output_acc: 0.9969 - val_classification_output_acc: 1.0000
+
+Epoch 00081: val_loss did not improve from 0.00127
+Epoch 82/1000
+ - 96s - loss: 8.7457e-04 - segmentation_output_loss: 8.7398e-04 - classification_output_loss: 5.9439e-07 - segmentation_output_acc: 0.9979 - classification_output_acc: 1.0000 - val_loss: 0.0013 - val_segmentation_output_loss: 0.0013 - val_classification_output_loss: 9.1925e-07 - val_segmentation_output_acc: 0.9970 - val_classification_output_acc: 1.0000
+
+Epoch 00082: val_loss improved from 0.00127 to 0.00126, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 83/1000
+ - 95s - loss: 8.3432e-04 - segmentation_output_loss: 8.3387e-04 - classification_output_loss: 4.5651e-07 - segmentation_output_acc: 0.9980 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 8.7549e-07 - val_segmentation_output_acc: 0.9971 - val_classification_output_acc: 1.0000
+
+Epoch 00083: val_loss improved from 0.00126 to 0.00123, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 84/1000
+ - 95s - loss: 8.1548e-04 - segmentation_output_loss: 8.1479e-04 - classification_output_loss: 6.9163e-07 - segmentation_output_acc: 0.9980 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 7.9305e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00084: val_loss improved from 0.00123 to 0.00117, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 85/1000
+ - 94s - loss: 7.7377e-04 - segmentation_output_loss: 7.7321e-04 - classification_output_loss: 5.5524e-07 - segmentation_output_acc: 0.9981 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 8.9997e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00085: val_loss did not improve from 0.00117
+Epoch 86/1000
+ - 95s - loss: 7.5882e-04 - segmentation_output_loss: 7.5833e-04 - classification_output_loss: 4.8667e-07 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 7.0818e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00086: val_loss improved from 0.00117 to 0.00116, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 87/1000
+ - 94s - loss: 7.4795e-04 - segmentation_output_loss: 7.4750e-04 - classification_output_loss: 4.5568e-07 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 5.9476e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00087: val_loss did not improve from 0.00116
+Epoch 88/1000
+ - 95s - loss: 7.4339e-04 - segmentation_output_loss: 7.4291e-04 - classification_output_loss: 4.8689e-07 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 7.8276e-07 - val_segmentation_output_acc: 0.9971 - val_classification_output_acc: 1.0000
+
+Epoch 00088: ReduceLROnPlateau reducing learning rate to 6.24999984211172e-06.
+
+Epoch 00088: val_loss did not improve from 0.00116
+Epoch 89/1000
+ - 95s - loss: 7.4703e-04 - segmentation_output_loss: 7.4658e-04 - classification_output_loss: 4.4885e-07 - segmentation_output_acc: 0.9982 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 7.2431e-07 - val_segmentation_output_acc: 0.9971 - val_classification_output_acc: 1.0000
+
+Epoch 00089: val_loss did not improve from 0.00116
+Epoch 90/1000
+ - 94s - loss: 7.1728e-04 - segmentation_output_loss: 7.1689e-04 - classification_output_loss: 3.8432e-07 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 6.7599e-07 - val_segmentation_output_acc: 0.9971 - val_classification_output_acc: 1.0000
+
+Epoch 00090: val_loss did not improve from 0.00116
+Epoch 91/1000
+ - 94s - loss: 7.0583e-04 - segmentation_output_loss: 7.0537e-04 - classification_output_loss: 4.6042e-07 - segmentation_output_acc: 0.9983 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 6.6616e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00091: val_loss improved from 0.00116 to 0.00116, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 92/1000
+ - 95s - loss: 6.8001e-04 - segmentation_output_loss: 6.7961e-04 - classification_output_loss: 4.0230e-07 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000 - val_loss: 0.0012 - val_segmentation_output_loss: 0.0012 - val_classification_output_loss: 6.3509e-07 - val_segmentation_output_acc: 0.9972 - val_classification_output_acc: 1.0000
+
+Epoch 00092: val_loss improved from 0.00116 to 0.00115, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 93/1000
+ - 95s - loss: 6.8015e-04 - segmentation_output_loss: 6.7977e-04 - classification_output_loss: 3.8101e-07 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 6.5792e-07 - val_segmentation_output_acc: 0.9973 - val_classification_output_acc: 1.0000
+
+Epoch 00093: val_loss improved from 0.00115 to 0.00110, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 94/1000
+ - 92s - loss: 6.5465e-04 - segmentation_output_loss: 6.5413e-04 - classification_output_loss: 5.1967e-07 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 5.4257e-07 - val_segmentation_output_acc: 0.9973 - val_classification_output_acc: 1.0000
+
+Epoch 00094: val_loss did not improve from 0.00110
+Epoch 95/1000
+ - 94s - loss: 6.4624e-04 - segmentation_output_loss: 6.4588e-04 - classification_output_loss: 3.6149e-07 - segmentation_output_acc: 0.9984 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 4.9822e-07 - val_segmentation_output_acc: 0.9974 - val_classification_output_acc: 1.0000
+
+Epoch 00095: val_loss improved from 0.00110 to 0.00107, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 96/1000
+ - 94s - loss: 6.4184e-04 - segmentation_output_loss: 6.4147e-04 - classification_output_loss: 3.7105e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 5.6691e-07 - val_segmentation_output_acc: 0.9974 - val_classification_output_acc: 1.0000
+
+Epoch 00096: val_loss did not improve from 0.00107
+Epoch 97/1000
+ - 95s - loss: 6.4142e-04 - segmentation_output_loss: 6.4105e-04 - classification_output_loss: 3.6252e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.5439e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00097: val_loss improved from 0.00107 to 0.00102, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 98/1000
+ - 95s - loss: 6.2825e-04 - segmentation_output_loss: 6.2782e-04 - classification_output_loss: 4.3195e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 5.2488e-07 - val_segmentation_output_acc: 0.9974 - val_classification_output_acc: 1.0000
+
+Epoch 00098: ReduceLROnPlateau reducing learning rate to 3.12499992105586e-06.
+
+Epoch 00098: val_loss did not improve from 0.00102
+Epoch 99/1000
+ - 95s - loss: 6.2780e-04 - segmentation_output_loss: 6.2732e-04 - classification_output_loss: 4.8754e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.7221e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00099: val_loss did not improve from 0.00102
+Epoch 100/1000
+ - 94s - loss: 6.1126e-04 - segmentation_output_loss: 6.1092e-04 - classification_output_loss: 3.3989e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 5.0530e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00100: val_loss did not improve from 0.00102
+Epoch 101/1000
+ - 95s - loss: 6.0330e-04 - segmentation_output_loss: 6.0295e-04 - classification_output_loss: 3.4321e-07 - segmentation_output_acc: 0.9985 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 5.0184e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00101: val_loss improved from 0.00102 to 0.00102, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 102/1000
+ - 94s - loss: 6.0099e-04 - segmentation_output_loss: 6.0064e-04 - classification_output_loss: 3.5115e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 5.0419e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00102: val_loss did not improve from 0.00102
+Epoch 103/1000
+ - 93s - loss: 5.9719e-04 - segmentation_output_loss: 5.9688e-04 - classification_output_loss: 3.1477e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.9859e-07 - val_segmentation_output_acc: 0.9974 - val_classification_output_acc: 1.0000
+
+Epoch 00103: ReduceLROnPlateau reducing learning rate to 1.56249996052793e-06.
+
+Epoch 00103: val_loss did not improve from 0.00102
+Epoch 104/1000
+ - 93s - loss: 6.0012e-04 - segmentation_output_loss: 5.9980e-04 - classification_output_loss: 3.2701e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0011 - val_segmentation_output_loss: 0.0011 - val_classification_output_loss: 4.7804e-07 - val_segmentation_output_acc: 0.9974 - val_classification_output_acc: 1.0000
+
+Epoch 00104: val_loss did not improve from 0.00102
+Epoch 105/1000
+ - 93s - loss: 5.9295e-04 - segmentation_output_loss: 5.9258e-04 - classification_output_loss: 3.7128e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.9211e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00105: val_loss did not improve from 0.00102
+Epoch 106/1000
+ - 94s - loss: 5.7549e-04 - segmentation_output_loss: 5.7518e-04 - classification_output_loss: 3.0269e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 5.1383e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00106: val_loss did not improve from 0.00102
+Epoch 107/1000
+ - 94s - loss: 5.8102e-04 - segmentation_output_loss: 5.8079e-04 - classification_output_loss: 2.3822e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.5915e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00107: val_loss did not improve from 0.00102
+Epoch 108/1000
+ - 94s - loss: 5.7335e-04 - segmentation_output_loss: 5.7296e-04 - classification_output_loss: 3.8800e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.6744e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00108: ReduceLROnPlateau reducing learning rate to 7.81249980263965e-07.
+
+Epoch 00108: val_loss did not improve from 0.00102
+Epoch 109/1000
+ - 94s - loss: 5.7567e-04 - segmentation_output_loss: 5.7524e-04 - classification_output_loss: 4.3041e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.7849e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00109: val_loss improved from 0.00102 to 0.00101, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 110/1000
+ - 94s - loss: 5.7107e-04 - segmentation_output_loss: 5.7072e-04 - classification_output_loss: 3.5435e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 0.0010 - val_segmentation_output_loss: 0.0010 - val_classification_output_loss: 4.8420e-07 - val_segmentation_output_acc: 0.9975 - val_classification_output_acc: 1.0000
+
+Epoch 00110: val_loss did not improve from 0.00101
+Epoch 111/1000
+ - 94s - loss: 5.6239e-04 - segmentation_output_loss: 5.6198e-04 - classification_output_loss: 4.1035e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.9966e-04 - val_segmentation_output_loss: 9.9919e-04 - val_classification_output_loss: 4.7021e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00111: val_loss improved from 0.00101 to 0.00100, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 112/1000
+ - 89s - loss: 5.6687e-04 - segmentation_output_loss: 5.6655e-04 - classification_output_loss: 3.1412e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 9.9852e-04 - val_segmentation_output_loss: 9.9804e-04 - val_classification_output_loss: 4.7295e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00112: val_loss improved from 0.00100 to 0.00100, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 113/1000
+ - 82s - loss: 5.6609e-04 - segmentation_output_loss: 5.6576e-04 - classification_output_loss: 3.2841e-07 - segmentation_output_acc: 0.9986 - classification_output_acc: 1.0000 - val_loss: 9.8695e-04 - val_segmentation_output_loss: 9.8647e-04 - val_classification_output_loss: 4.7971e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00113: val_loss improved from 0.00100 to 0.00099, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 114/1000
+ - 82s - loss: 5.5874e-04 - segmentation_output_loss: 5.5839e-04 - classification_output_loss: 3.5260e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.9644e-04 - val_segmentation_output_loss: 9.9596e-04 - val_classification_output_loss: 4.7570e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00114: val_loss did not improve from 0.00099
+Epoch 115/1000
+ - 82s - loss: 5.5119e-04 - segmentation_output_loss: 5.5090e-04 - classification_output_loss: 2.8957e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.8727e-04 - val_segmentation_output_loss: 9.8679e-04 - val_classification_output_loss: 4.8190e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00115: val_loss did not improve from 0.00099
+Epoch 116/1000
+ - 82s - loss: 5.5503e-04 - segmentation_output_loss: 5.5475e-04 - classification_output_loss: 2.7863e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.7705e-04 - val_segmentation_output_loss: 9.7658e-04 - val_classification_output_loss: 4.6444e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00116: ReduceLROnPlateau reducing learning rate to 3.906249901319825e-07.
+
+Epoch 00116: val_loss improved from 0.00099 to 0.00098, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 117/1000
+ - 82s - loss: 5.5521e-04 - segmentation_output_loss: 5.5492e-04 - classification_output_loss: 2.9128e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.6880e-04 - val_segmentation_output_loss: 9.6831e-04 - val_classification_output_loss: 4.9166e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00117: val_loss improved from 0.00098 to 0.00097, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 118/1000
+ - 82s - loss: 5.5869e-04 - segmentation_output_loss: 5.5837e-04 - classification_output_loss: 3.2748e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.7644e-04 - val_segmentation_output_loss: 9.7597e-04 - val_classification_output_loss: 4.7511e-07 - val_segmentation_output_acc: 0.9976 - val_classification_output_acc: 1.0000
+
+Epoch 00118: val_loss did not improve from 0.00097
+Epoch 119/1000
+ - 81s - loss: 5.4976e-04 - segmentation_output_loss: 5.4943e-04 - classification_output_loss: 3.2632e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.6232e-04 - val_segmentation_output_loss: 9.6186e-04 - val_classification_output_loss: 4.6386e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00119: val_loss improved from 0.00097 to 0.00096, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 120/1000
+ - 82s - loss: 5.4578e-04 - segmentation_output_loss: 5.4551e-04 - classification_output_loss: 2.7425e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5949e-04 - val_segmentation_output_loss: 9.5903e-04 - val_classification_output_loss: 4.6328e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00120: val_loss improved from 0.00096 to 0.00096, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 121/1000
+ - 82s - loss: 5.4987e-04 - segmentation_output_loss: 5.4956e-04 - classification_output_loss: 3.0957e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.6108e-04 - val_segmentation_output_loss: 9.6062e-04 - val_classification_output_loss: 4.6294e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00121: ReduceLROnPlateau reducing learning rate to 1.9531249506599124e-07.
+
+Epoch 00121: val_loss did not improve from 0.00096
+Epoch 122/1000
+ - 81s - loss: 5.3905e-04 - segmentation_output_loss: 5.3875e-04 - classification_output_loss: 2.9774e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.6217e-04 - val_segmentation_output_loss: 9.6170e-04 - val_classification_output_loss: 4.6996e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00122: val_loss did not improve from 0.00096
+Epoch 123/1000
+ - 82s - loss: 5.4320e-04 - segmentation_output_loss: 5.4291e-04 - classification_output_loss: 2.9297e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5669e-04 - val_segmentation_output_loss: 9.5623e-04 - val_classification_output_loss: 4.5780e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00123: val_loss improved from 0.00096 to 0.00096, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 124/1000
+ - 82s - loss: 5.4415e-04 - segmentation_output_loss: 5.4348e-04 - classification_output_loss: 6.6995e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5922e-04 - val_segmentation_output_loss: 9.5877e-04 - val_classification_output_loss: 4.5525e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00124: val_loss did not improve from 0.00096
+Epoch 125/1000
+ - 81s - loss: 5.4584e-04 - segmentation_output_loss: 5.4557e-04 - classification_output_loss: 2.7207e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5927e-04 - val_segmentation_output_loss: 9.5882e-04 - val_classification_output_loss: 4.5341e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00125: val_loss did not improve from 0.00096
+Epoch 126/1000
+ - 81s - loss: 5.4661e-04 - segmentation_output_loss: 5.4619e-04 - classification_output_loss: 4.1843e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.6046e-04 - val_segmentation_output_loss: 9.6001e-04 - val_classification_output_loss: 4.4985e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00126: ReduceLROnPlateau reducing learning rate to 9.765624753299562e-08.
+
+Epoch 00126: val_loss did not improve from 0.00096
+Epoch 127/1000
+ - 81s - loss: 5.3840e-04 - segmentation_output_loss: 5.3811e-04 - classification_output_loss: 2.8893e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5788e-04 - val_segmentation_output_loss: 9.5744e-04 - val_classification_output_loss: 4.4483e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00127: val_loss did not improve from 0.00096
+Epoch 128/1000
+ - 81s - loss: 5.4590e-04 - segmentation_output_loss: 5.4563e-04 - classification_output_loss: 2.6708e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5543e-04 - val_segmentation_output_loss: 9.5498e-04 - val_classification_output_loss: 4.5240e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00128: val_loss improved from 0.00096 to 0.00096, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 129/1000
+ - 82s - loss: 5.3968e-04 - segmentation_output_loss: 5.3936e-04 - classification_output_loss: 3.2176e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5721e-04 - val_segmentation_output_loss: 9.5674e-04 - val_classification_output_loss: 4.6254e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00129: val_loss did not improve from 0.00096
+Epoch 130/1000
+ - 81s - loss: 5.3562e-04 - segmentation_output_loss: 5.3532e-04 - classification_output_loss: 2.9505e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5516e-04 - val_segmentation_output_loss: 9.5470e-04 - val_classification_output_loss: 4.5340e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00130: val_loss improved from 0.00096 to 0.00096, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 131/1000
+ - 82s - loss: 5.4279e-04 - segmentation_output_loss: 5.4248e-04 - classification_output_loss: 3.0745e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5299e-04 - val_segmentation_output_loss: 9.5254e-04 - val_classification_output_loss: 4.4489e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00131: ReduceLROnPlateau reducing learning rate to 4.882812376649781e-08.
+
+Epoch 00131: val_loss improved from 0.00096 to 0.00095, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 132/1000
+ - 82s - loss: 5.3875e-04 - segmentation_output_loss: 5.3845e-04 - classification_output_loss: 2.9805e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5201e-04 - val_segmentation_output_loss: 9.5157e-04 - val_classification_output_loss: 4.3797e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00132: val_loss improved from 0.00095 to 0.00095, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 133/1000
+ - 82s - loss: 5.4395e-04 - segmentation_output_loss: 5.4370e-04 - classification_output_loss: 2.5330e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5118e-04 - val_segmentation_output_loss: 9.5073e-04 - val_classification_output_loss: 4.5802e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00133: val_loss improved from 0.00095 to 0.00095, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 134/1000
+ - 82s - loss: 5.4633e-04 - segmentation_output_loss: 5.4602e-04 - classification_output_loss: 3.0744e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.5165e-04 - val_segmentation_output_loss: 9.5118e-04 - val_classification_output_loss: 4.6565e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00134: val_loss did not improve from 0.00095
+Epoch 135/1000
+ - 81s - loss: 5.3812e-04 - segmentation_output_loss: 5.3770e-04 - classification_output_loss: 4.2289e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4558e-04 - val_segmentation_output_loss: 9.4511e-04 - val_classification_output_loss: 4.6605e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00135: val_loss improved from 0.00095 to 0.00095, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 136/1000
+ - 82s - loss: 5.4489e-04 - segmentation_output_loss: 5.4463e-04 - classification_output_loss: 2.6735e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4846e-04 - val_segmentation_output_loss: 9.4801e-04 - val_classification_output_loss: 4.5020e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00136: ReduceLROnPlateau reducing learning rate to 2.4414061883248905e-08.
+
+Epoch 00136: val_loss did not improve from 0.00095
+Epoch 137/1000
+ - 83s - loss: 5.3963e-04 - segmentation_output_loss: 5.3928e-04 - classification_output_loss: 3.5396e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4862e-04 - val_segmentation_output_loss: 9.4817e-04 - val_classification_output_loss: 4.5849e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00137: val_loss did not improve from 0.00095
+Epoch 138/1000
+ - 83s - loss: 5.4159e-04 - segmentation_output_loss: 5.4134e-04 - classification_output_loss: 2.5154e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4618e-04 - val_segmentation_output_loss: 9.4572e-04 - val_classification_output_loss: 4.6024e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00138: val_loss did not improve from 0.00095
+Epoch 139/1000
+ - 82s - loss: 5.4027e-04 - segmentation_output_loss: 5.3994e-04 - classification_output_loss: 3.2894e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4501e-04 - val_segmentation_output_loss: 9.4457e-04 - val_classification_output_loss: 4.4327e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00139: val_loss improved from 0.00095 to 0.00095, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 140/1000
+ - 82s - loss: 5.3954e-04 - segmentation_output_loss: 5.3865e-04 - classification_output_loss: 8.8792e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4382e-04 - val_segmentation_output_loss: 9.4337e-04 - val_classification_output_loss: 4.4691e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00140: val_loss improved from 0.00095 to 0.00094, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 141/1000
+ - 81s - loss: 5.4176e-04 - segmentation_output_loss: 5.4148e-04 - classification_output_loss: 2.7682e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4536e-04 - val_segmentation_output_loss: 9.4492e-04 - val_classification_output_loss: 4.4397e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00141: ReduceLROnPlateau reducing learning rate to 1.2207030941624453e-08.
+
+Epoch 00141: val_loss did not improve from 0.00094
+Epoch 142/1000
+ - 81s - loss: 5.5213e-04 - segmentation_output_loss: 5.5136e-04 - classification_output_loss: 7.6434e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3975e-04 - val_segmentation_output_loss: 9.3931e-04 - val_classification_output_loss: 4.4174e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00142: val_loss improved from 0.00094 to 0.00094, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 143/1000
+ - 80s - loss: 5.3422e-04 - segmentation_output_loss: 5.3391e-04 - classification_output_loss: 3.1301e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4272e-04 - val_segmentation_output_loss: 9.4228e-04 - val_classification_output_loss: 4.4396e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00143: val_loss did not improve from 0.00094
+Epoch 144/1000
+ - 82s - loss: 5.4407e-04 - segmentation_output_loss: 5.4374e-04 - classification_output_loss: 3.3280e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3914e-04 - val_segmentation_output_loss: 9.3871e-04 - val_classification_output_loss: 4.3675e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00144: val_loss improved from 0.00094 to 0.00094, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 145/1000
+ - 82s - loss: 5.4054e-04 - segmentation_output_loss: 5.4023e-04 - classification_output_loss: 3.1907e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4125e-04 - val_segmentation_output_loss: 9.4080e-04 - val_classification_output_loss: 4.4845e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00145: val_loss did not improve from 0.00094
+Epoch 146/1000
+ - 82s - loss: 5.4283e-04 - segmentation_output_loss: 5.4253e-04 - classification_output_loss: 3.0285e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4183e-04 - val_segmentation_output_loss: 9.4139e-04 - val_classification_output_loss: 4.3753e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00146: ReduceLROnPlateau reducing learning rate to 1e-08.
+
+Epoch 00146: val_loss did not improve from 0.00094
+Epoch 147/1000
+ - 82s - loss: 5.3681e-04 - segmentation_output_loss: 5.3653e-04 - classification_output_loss: 2.7927e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3924e-04 - val_segmentation_output_loss: 9.3881e-04 - val_classification_output_loss: 4.2470e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00147: val_loss did not improve from 0.00094
+Epoch 148/1000
+ - 82s - loss: 5.4205e-04 - segmentation_output_loss: 5.4179e-04 - classification_output_loss: 2.6211e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3667e-04 - val_segmentation_output_loss: 9.3626e-04 - val_classification_output_loss: 4.1537e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00148: val_loss improved from 0.00094 to 0.00094, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 149/1000
+ - 82s - loss: 5.4786e-04 - segmentation_output_loss: 5.4753e-04 - classification_output_loss: 3.3570e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.4079e-04 - val_segmentation_output_loss: 9.4038e-04 - val_classification_output_loss: 4.1818e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00149: val_loss did not improve from 0.00094
+Epoch 150/1000
+ - 82s - loss: 5.4318e-04 - segmentation_output_loss: 5.4289e-04 - classification_output_loss: 2.9025e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3762e-04 - val_segmentation_output_loss: 9.3720e-04 - val_classification_output_loss: 4.1619e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00150: val_loss did not improve from 0.00094
+Epoch 151/1000
+ - 76s - loss: 5.3676e-04 - segmentation_output_loss: 5.3647e-04 - classification_output_loss: 2.9133e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3677e-04 - val_segmentation_output_loss: 9.3635e-04 - val_classification_output_loss: 4.1596e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00151: val_loss did not improve from 0.00094
+Epoch 152/1000
+ - 82s - loss: 5.3988e-04 - segmentation_output_loss: 5.3958e-04 - classification_output_loss: 3.0173e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3401e-04 - val_segmentation_output_loss: 9.3358e-04 - val_classification_output_loss: 4.3035e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00152: val_loss improved from 0.00094 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 153/1000
+ - 82s - loss: 5.4271e-04 - segmentation_output_loss: 5.4237e-04 - classification_output_loss: 3.4474e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3407e-04 - val_segmentation_output_loss: 9.3364e-04 - val_classification_output_loss: 4.3078e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00153: val_loss did not improve from 0.00093
+Epoch 154/1000
+ - 82s - loss: 5.3840e-04 - segmentation_output_loss: 5.3815e-04 - classification_output_loss: 2.4754e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3412e-04 - val_segmentation_output_loss: 9.3368e-04 - val_classification_output_loss: 4.3300e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00154: val_loss did not improve from 0.00093
+Epoch 155/1000
+ - 82s - loss: 5.3714e-04 - segmentation_output_loss: 5.3680e-04 - classification_output_loss: 3.4133e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3476e-04 - val_segmentation_output_loss: 9.3433e-04 - val_classification_output_loss: 4.2572e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00155: val_loss did not improve from 0.00093
+Epoch 156/1000
+ - 82s - loss: 5.4120e-04 - segmentation_output_loss: 5.4088e-04 - classification_output_loss: 3.2043e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3503e-04 - val_segmentation_output_loss: 9.3461e-04 - val_classification_output_loss: 4.1723e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00156: val_loss did not improve from 0.00093
+Epoch 157/1000
+ - 79s - loss: 5.4184e-04 - segmentation_output_loss: 5.4154e-04 - classification_output_loss: 2.9350e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3293e-04 - val_segmentation_output_loss: 9.3250e-04 - val_classification_output_loss: 4.3589e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00157: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 158/1000
+ - 78s - loss: 5.4185e-04 - segmentation_output_loss: 5.4159e-04 - classification_output_loss: 2.5948e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3336e-04 - val_segmentation_output_loss: 9.3292e-04 - val_classification_output_loss: 4.3702e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00158: val_loss did not improve from 0.00093
+Epoch 159/1000
+ - 79s - loss: 5.3963e-04 - segmentation_output_loss: 5.3906e-04 - classification_output_loss: 5.6884e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3137e-04 - val_segmentation_output_loss: 9.3094e-04 - val_classification_output_loss: 4.3085e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00159: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 160/1000
+ - 78s - loss: 5.3659e-04 - segmentation_output_loss: 5.3633e-04 - classification_output_loss: 2.6824e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2821e-04 - val_segmentation_output_loss: 9.2779e-04 - val_classification_output_loss: 4.2307e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00160: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 161/1000
+ - 81s - loss: 5.4393e-04 - segmentation_output_loss: 5.4352e-04 - classification_output_loss: 4.1729e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3024e-04 - val_segmentation_output_loss: 9.2981e-04 - val_classification_output_loss: 4.2819e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00161: val_loss did not improve from 0.00093
+Epoch 162/1000
+ - 82s - loss: 5.3971e-04 - segmentation_output_loss: 5.3942e-04 - classification_output_loss: 2.8894e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.3105e-04 - val_segmentation_output_loss: 9.3061e-04 - val_classification_output_loss: 4.4038e-07 - val_segmentation_output_acc: 0.9977 - val_classification_output_acc: 1.0000
+
+Epoch 00162: val_loss did not improve from 0.00093
+Epoch 163/1000
+ - 82s - loss: 5.3244e-04 - segmentation_output_loss: 5.3216e-04 - classification_output_loss: 2.7089e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2963e-04 - val_segmentation_output_loss: 9.2919e-04 - val_classification_output_loss: 4.3114e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00163: val_loss did not improve from 0.00093
+Epoch 164/1000
+ - 82s - loss: 5.4077e-04 - segmentation_output_loss: 5.4048e-04 - classification_output_loss: 2.8683e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2768e-04 - val_segmentation_output_loss: 9.2727e-04 - val_classification_output_loss: 4.0979e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00164: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 165/1000
+ - 80s - loss: 5.3867e-04 - segmentation_output_loss: 5.3828e-04 - classification_output_loss: 3.8467e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2774e-04 - val_segmentation_output_loss: 9.2731e-04 - val_classification_output_loss: 4.2636e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00165: val_loss did not improve from 0.00093
+Epoch 166/1000
+ - 81s - loss: 5.3896e-04 - segmentation_output_loss: 5.3870e-04 - classification_output_loss: 2.6523e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2633e-04 - val_segmentation_output_loss: 9.2588e-04 - val_classification_output_loss: 4.4816e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00166: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 167/1000
+ - 82s - loss: 5.3868e-04 - segmentation_output_loss: 5.3832e-04 - classification_output_loss: 3.5246e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2528e-04 - val_segmentation_output_loss: 9.2483e-04 - val_classification_output_loss: 4.4191e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00167: val_loss improved from 0.00093 to 0.00093, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 168/1000
+ - 82s - loss: 5.4497e-04 - segmentation_output_loss: 5.4462e-04 - classification_output_loss: 3.5339e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2622e-04 - val_segmentation_output_loss: 9.2579e-04 - val_classification_output_loss: 4.2712e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00168: val_loss did not improve from 0.00093
+Epoch 169/1000
+ - 82s - loss: 5.3957e-04 - segmentation_output_loss: 5.3925e-04 - classification_output_loss: 3.2200e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2423e-04 - val_segmentation_output_loss: 9.2381e-04 - val_classification_output_loss: 4.1675e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00169: val_loss improved from 0.00093 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 170/1000
+ - 82s - loss: 5.3570e-04 - segmentation_output_loss: 5.3545e-04 - classification_output_loss: 2.5206e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.2436e-04 - val_segmentation_output_loss: 9.2393e-04 - val_classification_output_loss: 4.3774e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00170: val_loss did not improve from 0.00092
+Epoch 171/1000
+ - 82s - loss: 5.3954e-04 - segmentation_output_loss: 5.3922e-04 - classification_output_loss: 3.2182e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1898e-04 - val_segmentation_output_loss: 9.1855e-04 - val_classification_output_loss: 4.3049e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00171: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 172/1000
+ - 82s - loss: 5.4596e-04 - segmentation_output_loss: 5.4568e-04 - classification_output_loss: 2.8227e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1868e-04 - val_segmentation_output_loss: 9.1826e-04 - val_classification_output_loss: 4.1854e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00172: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 173/1000
+ - 82s - loss: 5.4080e-04 - segmentation_output_loss: 5.4049e-04 - classification_output_loss: 3.0538e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1838e-04 - val_segmentation_output_loss: 9.1796e-04 - val_classification_output_loss: 4.2197e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00173: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 174/1000
+ - 81s - loss: 5.4066e-04 - segmentation_output_loss: 5.4034e-04 - classification_output_loss: 3.1568e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1970e-04 - val_segmentation_output_loss: 9.1926e-04 - val_classification_output_loss: 4.3085e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00174: val_loss did not improve from 0.00092
+Epoch 175/1000
+ - 82s - loss: 5.4191e-04 - segmentation_output_loss: 5.4159e-04 - classification_output_loss: 3.2479e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1667e-04 - val_segmentation_output_loss: 9.1625e-04 - val_classification_output_loss: 4.2073e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00175: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 176/1000
+ - 82s - loss: 5.4516e-04 - segmentation_output_loss: 5.4486e-04 - classification_output_loss: 2.9752e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1554e-04 - val_segmentation_output_loss: 9.1513e-04 - val_classification_output_loss: 4.1547e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00176: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 177/1000
+ - 82s - loss: 5.4236e-04 - segmentation_output_loss: 5.4184e-04 - classification_output_loss: 5.1862e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1824e-04 - val_segmentation_output_loss: 9.1779e-04 - val_classification_output_loss: 4.4411e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00177: val_loss did not improve from 0.00092
+Epoch 178/1000
+ - 82s - loss: 5.3238e-04 - segmentation_output_loss: 5.3207e-04 - classification_output_loss: 3.0854e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1508e-04 - val_segmentation_output_loss: 9.1464e-04 - val_classification_output_loss: 4.3431e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00178: val_loss improved from 0.00092 to 0.00092, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 179/1000
+ - 81s - loss: 5.4081e-04 - segmentation_output_loss: 5.4050e-04 - classification_output_loss: 3.0088e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1490e-04 - val_segmentation_output_loss: 9.1447e-04 - val_classification_output_loss: 4.2777e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00179: val_loss improved from 0.00092 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 180/1000
+ - 81s - loss: 5.4692e-04 - segmentation_output_loss: 5.4663e-04 - classification_output_loss: 2.9296e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1208e-04 - val_segmentation_output_loss: 9.1167e-04 - val_classification_output_loss: 4.0560e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00180: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 181/1000
+ - 81s - loss: 5.5086e-04 - segmentation_output_loss: 5.5055e-04 - classification_output_loss: 3.0848e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1300e-04 - val_segmentation_output_loss: 9.1258e-04 - val_classification_output_loss: 4.1325e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00181: val_loss did not improve from 0.00091
+Epoch 182/1000
+ - 82s - loss: 5.4801e-04 - segmentation_output_loss: 5.4654e-04 - classification_output_loss: 1.4658e-06 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1024e-04 - val_segmentation_output_loss: 9.0981e-04 - val_classification_output_loss: 4.2052e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00182: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 183/1000
+ - 82s - loss: 5.2774e-04 - segmentation_output_loss: 5.2746e-04 - classification_output_loss: 2.8012e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.1069e-04 - val_segmentation_output_loss: 9.1030e-04 - val_classification_output_loss: 3.9660e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00183: val_loss did not improve from 0.00091
+Epoch 184/1000
+ - 82s - loss: 5.3716e-04 - segmentation_output_loss: 5.3683e-04 - classification_output_loss: 3.2895e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0900e-04 - val_segmentation_output_loss: 9.0860e-04 - val_classification_output_loss: 3.9284e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00184: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 185/1000
+ - 81s - loss: 5.4127e-04 - segmentation_output_loss: 5.4092e-04 - classification_output_loss: 3.5043e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0736e-04 - val_segmentation_output_loss: 9.0697e-04 - val_classification_output_loss: 3.9061e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00185: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 186/1000
+ - 81s - loss: 5.3982e-04 - segmentation_output_loss: 5.3954e-04 - classification_output_loss: 2.8593e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0679e-04 - val_segmentation_output_loss: 9.0639e-04 - val_classification_output_loss: 3.9609e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00186: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 187/1000
+ - 82s - loss: 5.3469e-04 - segmentation_output_loss: 5.3439e-04 - classification_output_loss: 2.9832e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0666e-04 - val_segmentation_output_loss: 9.0627e-04 - val_classification_output_loss: 3.9202e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00187: val_loss improved from 0.00091 to 0.00091, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 188/1000
+ - 83s - loss: 5.3610e-04 - segmentation_output_loss: 5.3583e-04 - classification_output_loss: 2.6957e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0453e-04 - val_segmentation_output_loss: 9.0413e-04 - val_classification_output_loss: 3.9276e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00188: val_loss improved from 0.00091 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 189/1000
+ - 81s - loss: 5.3793e-04 - segmentation_output_loss: 5.3763e-04 - classification_output_loss: 3.0346e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0620e-04 - val_segmentation_output_loss: 9.0581e-04 - val_classification_output_loss: 3.9532e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00189: val_loss did not improve from 0.00090
+Epoch 190/1000
+ - 81s - loss: 5.3773e-04 - segmentation_output_loss: 5.3739e-04 - classification_output_loss: 3.4277e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0532e-04 - val_segmentation_output_loss: 9.0492e-04 - val_classification_output_loss: 3.9718e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00190: val_loss did not improve from 0.00090
+Epoch 191/1000
+ - 81s - loss: 5.4413e-04 - segmentation_output_loss: 5.4387e-04 - classification_output_loss: 2.6156e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0447e-04 - val_segmentation_output_loss: 9.0408e-04 - val_classification_output_loss: 3.9035e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00191: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 192/1000
+ - 81s - loss: 5.4437e-04 - segmentation_output_loss: 5.4387e-04 - classification_output_loss: 5.0591e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0368e-04 - val_segmentation_output_loss: 9.0329e-04 - val_classification_output_loss: 3.8440e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00192: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 193/1000
+ - 82s - loss: 5.4469e-04 - segmentation_output_loss: 5.4436e-04 - classification_output_loss: 3.2957e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0242e-04 - val_segmentation_output_loss: 9.0203e-04 - val_classification_output_loss: 3.9133e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00193: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 194/1000
+ - 83s - loss: 5.3061e-04 - segmentation_output_loss: 5.3038e-04 - classification_output_loss: 2.3173e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0036e-04 - val_segmentation_output_loss: 8.9998e-04 - val_classification_output_loss: 3.8568e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00194: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 195/1000
+ - 82s - loss: 5.3675e-04 - segmentation_output_loss: 5.3640e-04 - classification_output_loss: 3.4854e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9903e-04 - val_segmentation_output_loss: 8.9863e-04 - val_classification_output_loss: 3.9584e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00195: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 196/1000
+ - 82s - loss: 5.4472e-04 - segmentation_output_loss: 5.4400e-04 - classification_output_loss: 7.2030e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0090e-04 - val_segmentation_output_loss: 9.0052e-04 - val_classification_output_loss: 3.8419e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00196: val_loss did not improve from 0.00090
+Epoch 197/1000
+ - 82s - loss: 5.4223e-04 - segmentation_output_loss: 5.4196e-04 - classification_output_loss: 2.6710e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9643e-04 - val_segmentation_output_loss: 8.9603e-04 - val_classification_output_loss: 3.9624e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00197: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 198/1000
+ - 82s - loss: 5.4123e-04 - segmentation_output_loss: 5.4094e-04 - classification_output_loss: 2.9065e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 9.0073e-04 - val_segmentation_output_loss: 9.0033e-04 - val_classification_output_loss: 4.0163e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00198: val_loss did not improve from 0.00090
+Epoch 199/1000
+ - 82s - loss: 5.3752e-04 - segmentation_output_loss: 5.3715e-04 - classification_output_loss: 3.7120e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9715e-04 - val_segmentation_output_loss: 8.9676e-04 - val_classification_output_loss: 3.8943e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00199: val_loss did not improve from 0.00090
+Epoch 200/1000
+ - 82s - loss: 5.3931e-04 - segmentation_output_loss: 5.3902e-04 - classification_output_loss: 2.9196e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9555e-04 - val_segmentation_output_loss: 8.9516e-04 - val_classification_output_loss: 3.9687e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00200: val_loss improved from 0.00090 to 0.00090, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 201/1000
+ - 82s - loss: 5.4263e-04 - segmentation_output_loss: 5.4231e-04 - classification_output_loss: 3.1986e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9456e-04 - val_segmentation_output_loss: 8.9416e-04 - val_classification_output_loss: 4.0156e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00201: val_loss improved from 0.00090 to 0.00089, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 202/1000
+ - 82s - loss: 5.4422e-04 - segmentation_output_loss: 5.4395e-04 - classification_output_loss: 2.7145e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9728e-04 - val_segmentation_output_loss: 8.9687e-04 - val_classification_output_loss: 4.0249e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00202: val_loss did not improve from 0.00089
+Epoch 203/1000
+ - 81s - loss: 5.4042e-04 - segmentation_output_loss: 5.4011e-04 - classification_output_loss: 3.0582e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9514e-04 - val_segmentation_output_loss: 8.9474e-04 - val_classification_output_loss: 3.9974e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00203: val_loss did not improve from 0.00089
+Epoch 204/1000
+ - 81s - loss: 5.3944e-04 - segmentation_output_loss: 5.3912e-04 - classification_output_loss: 3.2035e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9003e-04 - val_segmentation_output_loss: 8.8963e-04 - val_classification_output_loss: 4.0072e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00204: val_loss improved from 0.00089 to 0.00089, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 205/1000
+ - 82s - loss: 5.4500e-04 - segmentation_output_loss: 5.4432e-04 - classification_output_loss: 6.7770e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9633e-04 - val_segmentation_output_loss: 8.9593e-04 - val_classification_output_loss: 4.0215e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00205: val_loss did not improve from 0.00089
+Epoch 206/1000
+ - 81s - loss: 5.3238e-04 - segmentation_output_loss: 5.3208e-04 - classification_output_loss: 2.9394e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9456e-04 - val_segmentation_output_loss: 8.9416e-04 - val_classification_output_loss: 4.0809e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00206: val_loss did not improve from 0.00089
+Epoch 207/1000
+ - 82s - loss: 5.3850e-04 - segmentation_output_loss: 5.3823e-04 - classification_output_loss: 2.7098e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9241e-04 - val_segmentation_output_loss: 8.9202e-04 - val_classification_output_loss: 3.9838e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00207: val_loss did not improve from 0.00089
+Epoch 208/1000
+ - 82s - loss: 5.4698e-04 - segmentation_output_loss: 5.4669e-04 - classification_output_loss: 2.9101e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9351e-04 - val_segmentation_output_loss: 8.9312e-04 - val_classification_output_loss: 3.9211e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00208: val_loss did not improve from 0.00089
+Epoch 209/1000
+ - 83s - loss: 5.3856e-04 - segmentation_output_loss: 5.3829e-04 - classification_output_loss: 2.6848e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9257e-04 - val_segmentation_output_loss: 8.9218e-04 - val_classification_output_loss: 3.9090e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00209: val_loss did not improve from 0.00089
+Epoch 210/1000
+ - 82s - loss: 5.4137e-04 - segmentation_output_loss: 5.4110e-04 - classification_output_loss: 2.6941e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.9062e-04 - val_segmentation_output_loss: 8.9021e-04 - val_classification_output_loss: 4.0792e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00210: val_loss did not improve from 0.00089
+Epoch 211/1000
+ - 83s - loss: 5.3488e-04 - segmentation_output_loss: 5.3463e-04 - classification_output_loss: 2.5177e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8678e-04 - val_segmentation_output_loss: 8.8640e-04 - val_classification_output_loss: 3.8671e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00211: val_loss improved from 0.00089 to 0.00089, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 212/1000
+ - 82s - loss: 5.3389e-04 - segmentation_output_loss: 5.3360e-04 - classification_output_loss: 2.8990e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8359e-04 - val_segmentation_output_loss: 8.8320e-04 - val_classification_output_loss: 3.8437e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00212: val_loss improved from 0.00089 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 213/1000
+ - 80s - loss: 5.4007e-04 - segmentation_output_loss: 5.3970e-04 - classification_output_loss: 3.6996e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8539e-04 - val_segmentation_output_loss: 8.8500e-04 - val_classification_output_loss: 3.8670e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00213: val_loss did not improve from 0.00088
+Epoch 214/1000
+ - 82s - loss: 5.4466e-04 - segmentation_output_loss: 5.4439e-04 - classification_output_loss: 2.6385e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8731e-04 - val_segmentation_output_loss: 8.8690e-04 - val_classification_output_loss: 4.0429e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00214: val_loss did not improve from 0.00088
+Epoch 215/1000
+ - 82s - loss: 5.3762e-04 - segmentation_output_loss: 5.3725e-04 - classification_output_loss: 3.6637e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8408e-04 - val_segmentation_output_loss: 8.8367e-04 - val_classification_output_loss: 4.1029e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00215: val_loss did not improve from 0.00088
+Epoch 216/1000
+ - 81s - loss: 5.4315e-04 - segmentation_output_loss: 5.4282e-04 - classification_output_loss: 3.2840e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8623e-04 - val_segmentation_output_loss: 8.8584e-04 - val_classification_output_loss: 3.8567e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00216: val_loss did not improve from 0.00088
+Epoch 217/1000
+ - 82s - loss: 5.4254e-04 - segmentation_output_loss: 5.4223e-04 - classification_output_loss: 3.0933e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8410e-04 - val_segmentation_output_loss: 8.8371e-04 - val_classification_output_loss: 3.8816e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00217: val_loss did not improve from 0.00088
+Epoch 218/1000
+ - 82s - loss: 5.3192e-04 - segmentation_output_loss: 5.3168e-04 - classification_output_loss: 2.3784e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8624e-04 - val_segmentation_output_loss: 8.8583e-04 - val_classification_output_loss: 4.1150e-07 - val_segmentation_output_acc: 0.9978 - val_classification_output_acc: 1.0000
+
+Epoch 00218: val_loss did not improve from 0.00088
+Epoch 219/1000
+ - 82s - loss: 5.3969e-04 - segmentation_output_loss: 5.3939e-04 - classification_output_loss: 3.0902e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8392e-04 - val_segmentation_output_loss: 8.8353e-04 - val_classification_output_loss: 3.9608e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00219: val_loss did not improve from 0.00088
+Epoch 220/1000
+ - 82s - loss: 5.4065e-04 - segmentation_output_loss: 5.4038e-04 - classification_output_loss: 2.7481e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8132e-04 - val_segmentation_output_loss: 8.8093e-04 - val_classification_output_loss: 3.9875e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00220: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 221/1000
+ - 82s - loss: 5.4527e-04 - segmentation_output_loss: 5.4498e-04 - classification_output_loss: 2.9254e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8053e-04 - val_segmentation_output_loss: 8.8013e-04 - val_classification_output_loss: 3.9615e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00221: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 222/1000
+ - 83s - loss: 5.3700e-04 - segmentation_output_loss: 5.3674e-04 - classification_output_loss: 2.5255e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8278e-04 - val_segmentation_output_loss: 8.8237e-04 - val_classification_output_loss: 4.1329e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00222: val_loss did not improve from 0.00088
+Epoch 223/1000
+ - 81s - loss: 5.3227e-04 - segmentation_output_loss: 5.3195e-04 - classification_output_loss: 3.2059e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8004e-04 - val_segmentation_output_loss: 8.7965e-04 - val_classification_output_loss: 3.9463e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00223: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 224/1000
+ - 82s - loss: 5.4500e-04 - segmentation_output_loss: 5.4467e-04 - classification_output_loss: 3.3009e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7854e-04 - val_segmentation_output_loss: 8.7816e-04 - val_classification_output_loss: 3.7634e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00224: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 225/1000
+ - 82s - loss: 5.4948e-04 - segmentation_output_loss: 5.4909e-04 - classification_output_loss: 3.9864e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7971e-04 - val_segmentation_output_loss: 8.7931e-04 - val_classification_output_loss: 3.9739e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00225: val_loss did not improve from 0.00088
+Epoch 226/1000
+ - 82s - loss: 5.3680e-04 - segmentation_output_loss: 5.3653e-04 - classification_output_loss: 2.6986e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.8130e-04 - val_segmentation_output_loss: 8.8091e-04 - val_classification_output_loss: 3.9244e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00226: val_loss did not improve from 0.00088
+Epoch 227/1000
+ - 81s - loss: 5.3489e-04 - segmentation_output_loss: 5.3454e-04 - classification_output_loss: 3.5259e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7766e-04 - val_segmentation_output_loss: 8.7727e-04 - val_classification_output_loss: 3.8313e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00227: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 228/1000
+ - 83s - loss: 5.3597e-04 - segmentation_output_loss: 5.3569e-04 - classification_output_loss: 2.8072e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7545e-04 - val_segmentation_output_loss: 8.7508e-04 - val_classification_output_loss: 3.7436e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00228: val_loss improved from 0.00088 to 0.00088, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 229/1000
+ - 83s - loss: 5.3970e-04 - segmentation_output_loss: 5.3937e-04 - classification_output_loss: 3.3191e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7776e-04 - val_segmentation_output_loss: 8.7738e-04 - val_classification_output_loss: 3.8381e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00229: val_loss did not improve from 0.00088
+Epoch 230/1000
+ - 82s - loss: 5.4161e-04 - segmentation_output_loss: 5.4134e-04 - classification_output_loss: 2.6966e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7889e-04 - val_segmentation_output_loss: 8.7851e-04 - val_classification_output_loss: 3.7480e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00230: val_loss did not improve from 0.00088
+Epoch 231/1000
+ - 81s - loss: 5.3703e-04 - segmentation_output_loss: 5.3672e-04 - classification_output_loss: 3.1266e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7583e-04 - val_segmentation_output_loss: 8.7545e-04 - val_classification_output_loss: 3.8544e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00231: val_loss did not improve from 0.00088
+Epoch 232/1000
+ - 83s - loss: 5.3885e-04 - segmentation_output_loss: 5.3854e-04 - classification_output_loss: 3.1494e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7212e-04 - val_segmentation_output_loss: 8.7173e-04 - val_classification_output_loss: 3.8509e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00232: val_loss improved from 0.00088 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 233/1000
+ - 82s - loss: 5.3684e-04 - segmentation_output_loss: 5.3650e-04 - classification_output_loss: 3.3394e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7619e-04 - val_segmentation_output_loss: 8.7584e-04 - val_classification_output_loss: 3.4786e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00233: val_loss did not improve from 0.00087
+Epoch 234/1000
+ - 82s - loss: 5.3956e-04 - segmentation_output_loss: 5.3928e-04 - classification_output_loss: 2.8398e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7095e-04 - val_segmentation_output_loss: 8.7055e-04 - val_classification_output_loss: 4.0357e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00234: val_loss improved from 0.00087 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 235/1000
+ - 83s - loss: 5.3258e-04 - segmentation_output_loss: 5.3226e-04 - classification_output_loss: 3.2295e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7075e-04 - val_segmentation_output_loss: 8.7035e-04 - val_classification_output_loss: 3.9873e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00235: val_loss improved from 0.00087 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 236/1000
+ - 83s - loss: 5.2940e-04 - segmentation_output_loss: 5.2915e-04 - classification_output_loss: 2.5861e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6940e-04 - val_segmentation_output_loss: 8.6901e-04 - val_classification_output_loss: 3.8948e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00236: val_loss improved from 0.00087 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 237/1000
+ - 82s - loss: 5.4130e-04 - segmentation_output_loss: 5.4097e-04 - classification_output_loss: 3.2929e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.7147e-04 - val_segmentation_output_loss: 8.7107e-04 - val_classification_output_loss: 3.9149e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00237: val_loss did not improve from 0.00087
+Epoch 238/1000
+ - 82s - loss: 5.4364e-04 - segmentation_output_loss: 5.4339e-04 - classification_output_loss: 2.5208e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6877e-04 - val_segmentation_output_loss: 8.6837e-04 - val_classification_output_loss: 3.9197e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00238: val_loss improved from 0.00087 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 239/1000
+ - 82s - loss: 5.3888e-04 - segmentation_output_loss: 5.3849e-04 - classification_output_loss: 3.9250e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6855e-04 - val_segmentation_output_loss: 8.6816e-04 - val_classification_output_loss: 3.9397e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00239: val_loss improved from 0.00087 to 0.00087, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 240/1000
+ - 82s - loss: 5.4008e-04 - segmentation_output_loss: 5.3970e-04 - classification_output_loss: 3.7962e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6909e-04 - val_segmentation_output_loss: 8.6870e-04 - val_classification_output_loss: 3.9129e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00240: val_loss did not improve from 0.00087
+Epoch 241/1000
+ - 82s - loss: 5.3724e-04 - segmentation_output_loss: 5.3692e-04 - classification_output_loss: 3.2568e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6470e-04 - val_segmentation_output_loss: 8.6431e-04 - val_classification_output_loss: 3.8840e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00241: val_loss improved from 0.00087 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 242/1000
+ - 82s - loss: 5.3861e-04 - segmentation_output_loss: 5.3834e-04 - classification_output_loss: 2.6500e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6705e-04 - val_segmentation_output_loss: 8.6665e-04 - val_classification_output_loss: 3.9528e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00242: val_loss did not improve from 0.00086
+Epoch 243/1000
+ - 83s - loss: 5.3377e-04 - segmentation_output_loss: 5.3350e-04 - classification_output_loss: 2.6935e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6469e-04 - val_segmentation_output_loss: 8.6429e-04 - val_classification_output_loss: 3.9422e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00243: val_loss improved from 0.00086 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 244/1000
+ - 86s - loss: 5.4476e-04 - segmentation_output_loss: 5.4442e-04 - classification_output_loss: 3.4143e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6181e-04 - val_segmentation_output_loss: 8.6142e-04 - val_classification_output_loss: 3.8868e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00244: val_loss improved from 0.00086 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 245/1000
+ - 81s - loss: 5.4537e-04 - segmentation_output_loss: 5.4501e-04 - classification_output_loss: 3.5743e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6256e-04 - val_segmentation_output_loss: 8.6217e-04 - val_classification_output_loss: 3.8476e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00245: val_loss did not improve from 0.00086
+Epoch 246/1000
+ - 83s - loss: 5.3841e-04 - segmentation_output_loss: 5.3816e-04 - classification_output_loss: 2.5574e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6340e-04 - val_segmentation_output_loss: 8.6301e-04 - val_classification_output_loss: 3.9001e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00246: val_loss did not improve from 0.00086
+Epoch 247/1000
+ - 82s - loss: 5.3868e-04 - segmentation_output_loss: 5.3837e-04 - classification_output_loss: 3.0982e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6229e-04 - val_segmentation_output_loss: 8.6191e-04 - val_classification_output_loss: 3.7893e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00247: val_loss did not improve from 0.00086
+Epoch 248/1000
+ - 83s - loss: 5.4601e-04 - segmentation_output_loss: 5.4500e-04 - classification_output_loss: 1.0080e-06 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6250e-04 - val_segmentation_output_loss: 8.6213e-04 - val_classification_output_loss: 3.6548e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00248: val_loss did not improve from 0.00086
+Epoch 249/1000
+ - 82s - loss: 5.3744e-04 - segmentation_output_loss: 5.3714e-04 - classification_output_loss: 3.0202e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6102e-04 - val_segmentation_output_loss: 8.6065e-04 - val_classification_output_loss: 3.7312e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00249: val_loss improved from 0.00086 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 250/1000
+ - 83s - loss: 5.4341e-04 - segmentation_output_loss: 5.4315e-04 - classification_output_loss: 2.6855e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6356e-04 - val_segmentation_output_loss: 8.6318e-04 - val_classification_output_loss: 3.8400e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00250: val_loss did not improve from 0.00086
+Epoch 251/1000
+ - 82s - loss: 5.3681e-04 - segmentation_output_loss: 5.3654e-04 - classification_output_loss: 2.6683e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6276e-04 - val_segmentation_output_loss: 8.6239e-04 - val_classification_output_loss: 3.7847e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00251: val_loss did not improve from 0.00086
+Epoch 252/1000
+ - 82s - loss: 5.3455e-04 - segmentation_output_loss: 5.3428e-04 - classification_output_loss: 2.6925e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5853e-04 - val_segmentation_output_loss: 8.5815e-04 - val_classification_output_loss: 3.7976e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00252: val_loss improved from 0.00086 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 253/1000
+ - 83s - loss: 5.4155e-04 - segmentation_output_loss: 5.4123e-04 - classification_output_loss: 3.2419e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6049e-04 - val_segmentation_output_loss: 8.6010e-04 - val_classification_output_loss: 3.8126e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00253: val_loss did not improve from 0.00086
+Epoch 254/1000
+ - 83s - loss: 5.4919e-04 - segmentation_output_loss: 5.4894e-04 - classification_output_loss: 2.4631e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6232e-04 - val_segmentation_output_loss: 8.6194e-04 - val_classification_output_loss: 3.8225e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00254: val_loss did not improve from 0.00086
+Epoch 255/1000
+ - 83s - loss: 5.4054e-04 - segmentation_output_loss: 5.4026e-04 - classification_output_loss: 2.8510e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.6001e-04 - val_segmentation_output_loss: 8.5962e-04 - val_classification_output_loss: 3.8441e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00255: val_loss did not improve from 0.00086
+Epoch 256/1000
+ - 82s - loss: 5.3326e-04 - segmentation_output_loss: 5.3293e-04 - classification_output_loss: 3.3709e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5640e-04 - val_segmentation_output_loss: 8.5602e-04 - val_classification_output_loss: 3.8180e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00256: val_loss improved from 0.00086 to 0.00086, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 257/1000
+ - 83s - loss: 5.3936e-04 - segmentation_output_loss: 5.3906e-04 - classification_output_loss: 3.0218e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5405e-04 - val_segmentation_output_loss: 8.5366e-04 - val_classification_output_loss: 3.8815e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00257: val_loss improved from 0.00086 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 258/1000
+ - 82s - loss: 5.2935e-04 - segmentation_output_loss: 5.2905e-04 - classification_output_loss: 2.9962e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5789e-04 - val_segmentation_output_loss: 8.5749e-04 - val_classification_output_loss: 3.9484e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00258: val_loss did not improve from 0.00085
+Epoch 259/1000
+ - 83s - loss: 5.3622e-04 - segmentation_output_loss: 5.3588e-04 - classification_output_loss: 3.4069e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5967e-04 - val_segmentation_output_loss: 8.5928e-04 - val_classification_output_loss: 3.9021e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00259: val_loss did not improve from 0.00085
+Epoch 260/1000
+ - 81s - loss: 5.3399e-04 - segmentation_output_loss: 5.3371e-04 - classification_output_loss: 2.8535e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5571e-04 - val_segmentation_output_loss: 8.5531e-04 - val_classification_output_loss: 3.9208e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00260: val_loss did not improve from 0.00085
+Epoch 261/1000
+ - 82s - loss: 5.4323e-04 - segmentation_output_loss: 5.4262e-04 - classification_output_loss: 6.0836e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5400e-04 - val_segmentation_output_loss: 8.5362e-04 - val_classification_output_loss: 3.8158e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00261: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 262/1000
+ - 83s - loss: 5.3345e-04 - segmentation_output_loss: 5.3315e-04 - classification_output_loss: 2.9771e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5332e-04 - val_segmentation_output_loss: 8.5292e-04 - val_classification_output_loss: 3.9627e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00262: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 263/1000
+ - 83s - loss: 5.3360e-04 - segmentation_output_loss: 5.3331e-04 - classification_output_loss: 2.9162e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5401e-04 - val_segmentation_output_loss: 8.5362e-04 - val_classification_output_loss: 3.9528e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00263: val_loss did not improve from 0.00085
+Epoch 264/1000
+ - 82s - loss: 5.4460e-04 - segmentation_output_loss: 5.4431e-04 - classification_output_loss: 2.8955e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5222e-04 - val_segmentation_output_loss: 8.5183e-04 - val_classification_output_loss: 3.8783e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00264: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 265/1000
+ - 83s - loss: 5.4009e-04 - segmentation_output_loss: 5.3973e-04 - classification_output_loss: 3.5591e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5322e-04 - val_segmentation_output_loss: 8.5281e-04 - val_classification_output_loss: 4.0168e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00265: val_loss did not improve from 0.00085
+Epoch 266/1000
+ - 82s - loss: 5.3393e-04 - segmentation_output_loss: 5.3366e-04 - classification_output_loss: 2.6827e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5383e-04 - val_segmentation_output_loss: 8.5343e-04 - val_classification_output_loss: 3.9563e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00266: val_loss did not improve from 0.00085
+Epoch 267/1000
+ - 82s - loss: 5.3535e-04 - segmentation_output_loss: 5.3504e-04 - classification_output_loss: 3.1184e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5430e-04 - val_segmentation_output_loss: 8.5391e-04 - val_classification_output_loss: 3.9298e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00267: val_loss did not improve from 0.00085
+Epoch 268/1000
+ - 82s - loss: 5.3619e-04 - segmentation_output_loss: 5.3588e-04 - classification_output_loss: 3.0390e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5116e-04 - val_segmentation_output_loss: 8.5076e-04 - val_classification_output_loss: 3.9418e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00268: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 269/1000
+ - 83s - loss: 5.3508e-04 - segmentation_output_loss: 5.3480e-04 - classification_output_loss: 2.8373e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5233e-04 - val_segmentation_output_loss: 8.5193e-04 - val_classification_output_loss: 4.0076e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00269: val_loss did not improve from 0.00085
+Epoch 270/1000
+ - 82s - loss: 5.3558e-04 - segmentation_output_loss: 5.3518e-04 - classification_output_loss: 4.0413e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5365e-04 - val_segmentation_output_loss: 8.5325e-04 - val_classification_output_loss: 4.0756e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00270: val_loss did not improve from 0.00085
+Epoch 271/1000
+ - 81s - loss: 5.3397e-04 - segmentation_output_loss: 5.3363e-04 - classification_output_loss: 3.4099e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4911e-04 - val_segmentation_output_loss: 8.4871e-04 - val_classification_output_loss: 4.0164e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00271: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 272/1000
+ - 82s - loss: 5.3507e-04 - segmentation_output_loss: 5.3480e-04 - classification_output_loss: 2.6730e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4947e-04 - val_segmentation_output_loss: 8.4907e-04 - val_classification_output_loss: 3.9510e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00272: val_loss did not improve from 0.00085
+Epoch 273/1000
+ - 84s - loss: 5.3896e-04 - segmentation_output_loss: 5.3812e-04 - classification_output_loss: 8.4140e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4736e-04 - val_segmentation_output_loss: 8.4695e-04 - val_classification_output_loss: 4.0137e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00273: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 274/1000
+ - 86s - loss: 5.4293e-04 - segmentation_output_loss: 5.4257e-04 - classification_output_loss: 3.6624e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.5030e-04 - val_segmentation_output_loss: 8.4989e-04 - val_classification_output_loss: 4.0718e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00274: val_loss did not improve from 0.00085
+Epoch 275/1000
+ - 79s - loss: 5.3708e-04 - segmentation_output_loss: 5.3678e-04 - classification_output_loss: 3.0643e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4713e-04 - val_segmentation_output_loss: 8.4673e-04 - val_classification_output_loss: 3.9897e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00275: val_loss improved from 0.00085 to 0.00085, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 276/1000
+ - 83s - loss: 5.4417e-04 - segmentation_output_loss: 5.4387e-04 - classification_output_loss: 2.9146e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4726e-04 - val_segmentation_output_loss: 8.4686e-04 - val_classification_output_loss: 3.9538e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00276: val_loss did not improve from 0.00085
+Epoch 277/1000
+ - 88s - loss: 5.3960e-04 - segmentation_output_loss: 5.3932e-04 - classification_output_loss: 2.8283e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4720e-04 - val_segmentation_output_loss: 8.4680e-04 - val_classification_output_loss: 3.9886e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00277: val_loss did not improve from 0.00085
+Epoch 278/1000
+ - 83s - loss: 5.3178e-04 - segmentation_output_loss: 5.3151e-04 - classification_output_loss: 2.6296e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4356e-04 - val_segmentation_output_loss: 8.4315e-04 - val_classification_output_loss: 4.1416e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00278: val_loss improved from 0.00085 to 0.00084, saving model to weights/2019-09-30 17-32-13.hdf5
+Epoch 279/1000
+ - 83s - loss: 5.4021e-04 - segmentation_output_loss: 5.3983e-04 - classification_output_loss: 3.8234e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4456e-04 - val_segmentation_output_loss: 8.4416e-04 - val_classification_output_loss: 4.0791e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000
+
+Epoch 00279: val_loss did not improve from 0.00084
+Epoch 280/1000
+ - 82s - loss: 5.3654e-04 - segmentation_output_loss: 5.3626e-04 - classification_output_loss: 2.8255e-07 - segmentation_output_acc: 0.9987 - classification_output_acc: 1.0000 - val_loss: 8.4139e-04 - val_segmentation_output_loss: 8.4098e-04 - val_classification_output_loss: 4.0829e-07 - val_segmentation_output_acc: 0.9979 - val_classification_output_acc: 1.0000

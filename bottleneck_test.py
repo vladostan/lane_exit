@@ -4,11 +4,12 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 # In[]: Imports
 import pickle
 import json
+from tqdm import tqdm
 import matplotlib.pylab as plt
 from glob import glob
 import numpy as np
@@ -21,7 +22,6 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
 from segmentation_models import Linknet_bottleneck_crop
-from classification_models.senet import SEResNet50, preprocess_input
 from keras import optimizers, callbacks
 from losses import dice_coef_multiclass_loss
 from albumentations import (
@@ -37,7 +37,7 @@ from albumentations import (
 )
 
 # In[]: Parameters
-visualize = True
+visualize = False
 
 num_classes = 1
 
@@ -52,13 +52,18 @@ batch_size = 1
 verbose = 1
 
 #weights = "2019-09-27 17-40-50"
-weights = "2019-09-27 17-41-40"
+#weights = "2019-09-27 17-41-40"
 #weights = "2019-09-27 17-44-01"
+
+#weights = "2019-09-30 17-32-13"
+weights = "2019-09-30 17-33-02" 
+#[0.002347076744235192, 0.0023221724831683378, 2.490426791962551e-05, 0.9947150285427387, 1.0]
 
 # In[]:
 dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
 #subdirs = ["2019-04-24", "2019-05-08", "2019-05-15"]
-subdirs = ["2019-05-20"]
+#subdirs = ["2019-05-20"]
+subdirs = ["2019-04-24", "2019-05-08", "2019-05-15", "2019-05-20"]
 
 obj_class_to_machine_color = dataset_dir + "obj_class_to_machine_color.json"
 
@@ -96,23 +101,23 @@ print("Images shape: {}".format(get_image(img_path, resize = True if resize else
 print("Labels shape: {}\n".format(get_image(label_path, label = True, resize = True if resize else False).shape))
 
 # In[]: Prepare for training
-val_size = 0.
-test_size = 0.9999
+#val_size = 0.
+#test_size = 0.9999
+#
+#print("Train:Val:Test split = {}:{}:{}\n".format(1-val_size-test_size, val_size, test_size))
+#
+#ann_files_train, ann_files_valtest = train_test_split(ann_files, test_size=val_size+test_size, random_state=random_state)
+#ann_files_val, ann_files_test = train_test_split(ann_files_valtest, test_size=test_size/(test_size+val_size+1e-8)-1e-8, random_state=random_state)
+#del(ann_files_valtest)
+#
+#print("Training files count: {}".format(len(ann_files_train)))
+#print("Validation files count: {}".format(len(ann_files_val)))
+#print("Testing files count: {}\n".format(len(ann_files_test)))
 
-print("Train:Val:Test split = {}:{}:{}\n".format(1-val_size-test_size, val_size, test_size))
-
-ann_files_train, ann_files_valtest = train_test_split(ann_files, test_size=val_size+test_size, random_state=random_state)
-ann_files_val, ann_files_test = train_test_split(ann_files_valtest, test_size=test_size/(test_size+val_size+1e-8)-1e-8, random_state=random_state)
-del(ann_files_valtest)
-
-print("Training files count: {}".format(len(ann_files_train)))
-print("Validation files count: {}".format(len(ann_files_val)))
-print("Testing files count: {}\n".format(len(ann_files_test)))
-
-#with open('pickles/{}.pickle'.format(weights), 'rb') as f:
-#    ann_files_train = pickle.load(f)
-#    ann_files_val = pickle.load(f)
-#    ann_files_test = pickle.load(f)
+with open('pickles/{}.pickle'.format(weights), 'rb') as f:
+    ann_files_train = pickle.load(f)
+    ann_files_val = pickle.load(f)
+    ann_files_test = pickle.load(f)
     
 # In[]: 
 def predict_generator(files, preprocessing_fn = None, batch_size = 1):
@@ -251,15 +256,15 @@ print("OFFLANE PREDICT: {}".format(offlane))
 print("OFFLANE GT: {}".format(bool(y1_true)))
 
 # In[]:
-steps = len(ann_files_test)//batch_size
-
-history = model.evaluate_generator(
-        generator = eval_gen,
-        steps = steps,
-        verbose = verbose
-        )
-
-print(history)
+#steps = len(ann_files_test)//batch_size
+#
+#history = model.evaluate_generator(
+#        generator = eval_gen,
+#        steps = steps,
+#        verbose = verbose
+#        )
+#
+#print(history)
 
 #with open('evaluate.pickle', 'wb') as f:
 #    pickle.dump(history, f)
@@ -289,7 +294,58 @@ print(history)
 
 # In[]:
 #y_pred1 = y_pred[1]
-#y_pred2 = y_pred[0]    
+#y_pred2 = y_pred[0]   
+
+# In[]:
+import cv2
+font                   = cv2.FONT_HERSHEY_SIMPLEX
+bottomLeftCornerOfText = (5,30)
+fontScale              = 1
+fontColor              = (255,255,255)
+lineType               = 2
+
+for aft in tqdm(ann_files_test):
     
+    x = get_image(aft.replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
+    x_vis = x.copy()
+    x = preprocessing_fn(x)
+    y_pred = model.predict(np.expand_dims(x,axis=0))
+    y1_pred = y_pred[1]
+    y1_pred = np.squeeze(y1_pred) > 0.5
+    y2_pred = y_pred[0]
     
+    with open(aft) as json_file:
+        data = json.load(json_file)
+        tags = data['tags']
+
+    y1_true = False
+    if len(tags) > 0:
+        for tag in range(len(tags)):
+            tag_name = tags[tag]['name']
+            if tag_name == 'offlane':
+                value = tags[tag]['value']
+                if value == '1':
+                    y1_true = True
+                    break
+                
+    y2_true = get_image(aft.replace('/ann/', '/masks_machine/').split('.json')[0], resize = True if resize else False)
+    y2_true = y2_true == object_color['direct'][0]
+    y2_true = y2_true[...,0]
+    
+    vis_pred = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*np.squeeze(y2_pred > 0.5).astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
+    cv2.putText(vis_pred, 'Prediction', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+    if y1_pred:
+        cv2.putText(vis_pred, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
+    
+    vis_true = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*y2_true.astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
+    cv2.putText(vis_true, 'Ground Truth', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+    if y1_true:
+        cv2.putText(vis_true, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
+     
+#    plt.imshow(np.vstack((vis_pred, vis_true)))
+        
+    if not os.path.exists("results/{}".format(weights)):
+        os.mkdir("results/{}".format(weights))
+        
+    cv2.imwrite("results/{}/{}.png".format(weights, aft.split('/')[-1].split('.')[0]), cv2.cvtColor(np.vstack((vis_pred, vis_true)), cv2.COLOR_BGR2RGB))
     
