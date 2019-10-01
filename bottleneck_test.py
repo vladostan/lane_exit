@@ -13,31 +13,16 @@ from tqdm import tqdm
 import matplotlib.pylab as plt
 from glob import glob
 import numpy as np
-import datetime
-import sys
-import keras
-from keras.utils import plot_model
-from keras.utils import to_categorical
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
 from segmentation_models import Linknet_bottleneck_crop
-from keras import optimizers, callbacks
-from losses import dice_coef_multiclass_loss
-from albumentations import (
-    OneOf,
-    Blur,
-    RandomGamma,
-    HueSaturationValue,
-    RGBShift,
-    RandomBrightness,
-    RandomContrast,
-    MedianBlur,
-    CLAHE
-)
+from keras import optimizers
+import cv2
 
 # In[]: Parameters
 visualize = False
+save_results = True
 
 num_classes = 1
 
@@ -55,9 +40,8 @@ verbose = 1
 #weights = "2019-09-27 17-41-40"
 #weights = "2019-09-27 17-44-01"
 
-#weights = "2019-09-30 17-32-13"
-weights = "2019-09-30 17-33-02" 
-#[0.002347076744235192, 0.0023221724831683378, 2.490426791962551e-05, 0.9947150285427387, 1.0]
+weights = "2019-09-30 17-32-13"
+#weights = "2019-09-30 17-33-02" 
 
 # In[]:
 dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
@@ -270,19 +254,6 @@ print("OFFLANE GT: {}".format(bool(y1_true)))
 #    pickle.dump(history, f)
     
 # In[]:
-#[0.008236413411275073,
-# 0.008131222682190941,
-# 0.0001051907178693822,
-# 0.997653000838273,
-# 1.0]
-    
-#['loss',
-# 'segmentation_output_loss',
-# 'classification_output_loss',
-# 'segmentation_output_acc',
-# 'classification_output_acc']
-    
-# In[]:
 #y_pred = model.predict_generator(
 #        generator = predict_gen,
 #        steps = steps,
@@ -297,13 +268,29 @@ print("OFFLANE GT: {}".format(bool(y1_true)))
 #y_pred2 = y_pred[0]   
 
 # In[]:
-import cv2
-font                   = cv2.FONT_HERSHEY_SIMPLEX
-bottomLeftCornerOfText = (5,30)
-fontScale              = 1
-fontColor              = (255,255,255)
-lineType               = 2
+if save_results:
+    font                   = cv2.FONT_HERSHEY_SIMPLEX
+    bottomLeftCornerOfText = (5,30)
+    fontScale              = 1
+    fontColor              = (255,255,255)
+    lineType               = 2
 
+from metrics import tpfpfn, Accuracy, Precision, Recall, IU, F1, TNR, NPV, FPR, FDR, FNR, BACC
+
+mAccuracy_ = 0
+mPrecision_ = 0
+mRecall_ = 0
+mIU_ = 0
+mF1_ = 0
+mTNR_ = 0
+mNPV_ = 0
+mFPR_ = 0
+mFDR_ = 0
+mFNR_ = 0
+mBACC_ = 0
+
+dlina = len(ann_files_test)
+    
 for aft in tqdm(ann_files_test):
     
     x = get_image(aft.replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
@@ -332,20 +319,48 @@ for aft in tqdm(ann_files_test):
     y2_true = y2_true == object_color['direct'][0]
     y2_true = y2_true[...,0]
     
-    vis_pred = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*np.squeeze(y2_pred > 0.5).astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
-    cv2.putText(vis_pred, 'Prediction', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-    if y1_pred:
-        cv2.putText(vis_pred, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
-    
-    vis_true = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*y2_true.astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
-    cv2.putText(vis_true, 'Ground Truth', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
-    if y1_true:
-        cv2.putText(vis_true, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
-     
-#    plt.imshow(np.vstack((vis_pred, vis_true)))
+    if save_results:
+        vis_pred = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*np.squeeze(y2_pred > 0.5).astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
+        cv2.putText(vis_pred, 'Prediction', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+        if y1_pred:
+            cv2.putText(vis_pred, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
         
-    if not os.path.exists("results/{}".format(weights)):
-        os.mkdir("results/{}".format(weights))
-        
-    cv2.imwrite("results/{}/{}.png".format(weights, aft.split('/')[-1].split('.')[0]), cv2.cvtColor(np.vstack((vis_pred, vis_true)), cv2.COLOR_BGR2RGB))
+        vis_true = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*y2_true.astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
+        cv2.putText(vis_true, 'Ground Truth', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+        if y1_true:
+            cv2.putText(vis_true, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
+                 
+        if not os.path.exists("results/{}".format(weights)):
+            os.mkdir("results/{}".format(weights))
+            
+        cv2.imwrite("results/{}/{}.png".format(weights, aft.split('/')[-1].split('.')[0]), cv2.cvtColor(np.vstack((vis_pred, vis_true)), cv2.COLOR_BGR2RGB))
     
+    y2_true = y2_true.astype('int64')  
+    y2_pred = np.squeeze(y2_pred > 0.5).astype('int64')
+
+#    TP, FP, FN, TN = tpfpfn(y1_pred, y1_true)
+    TP, FP, FN, TN = tpfpfn(y2_pred, y2_true)
+    
+    mAccuracy_ += Accuracy(TP, FP, FN, TN)/dlina
+    mPrecision_ += Precision(TP, FP)/dlina
+    mRecall_ += Recall(TP, FN)/dlina
+    mIU_ += IU(TP, FP, FN)/dlina
+    mF1_ += F1(TP, FP, FN)/dlina
+    mTNR_ += TNR(TN, FP)/dlina
+    mNPV_ += NPV(TN, FN)/dlina
+    mFPR_ += FPR(FP, TN)/dlina
+    mFDR_ += FDR(FP, TP)/dlina
+    mFNR_ += FNR(FN, TP)/dlina
+    mBACC_ += BACC(TP, FP, FN, TN)/dlina
+    
+print("accuracy: {}".format(mAccuracy_))
+print("precision: {}".format(mPrecision_))
+print("recall: {}".format(mRecall_))
+print("iu: {}".format(mIU_))
+print("f1: {}".format(mF1_))
+print("TNR: {}".format(mTNR_))
+print("NPV: {}".format(mNPV_))
+print("FPR: {}".format(mFPR_))
+print("FDR: {}".format(mFDR_))
+print("FNR: {}".format(mFNR_))
+print("BACC: {}".format(mBACC_))

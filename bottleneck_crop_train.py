@@ -4,7 +4,7 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # In[]: Imports
 import json
@@ -17,7 +17,7 @@ import sys
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
-from segmentation_models import Linknet_bottleneck_crop
+from segmentation_models import Linknet, Linknet_bottleneck_crop
 from keras import optimizers, callbacks
 from albumentations import (
     OneOf,
@@ -32,8 +32,9 @@ from albumentations import (
 )
 
 # In[]: Parameters
-log = True
+log = False
 visualize = False
+class_weight_counting = True
 aug = True
 
 num_classes = 1
@@ -142,6 +143,24 @@ if log:
         pickle.dump(ann_files_train, f)
         pickle.dump(ann_files_val, f)
         pickle.dump(ann_files_test, f)
+        
+# In[]: Class weight counting
+#if class_weight_counting:    
+#    cw = np.zeros(num_classes, dtype=np.int64)
+#
+#    for lt in labels_train:
+#        l = get_image(lt, label=True)
+#        
+#        for i in range(num_classes):
+#            cw[i] += np.count_nonzero(l==i)
+#        
+#    if sum(cw) == len(labels_train)*input_shape[0]*input_shape[1]:
+#        print("Class weights calculated successfully:")
+#        class_weights = np.median(cw/sum(cw))/(cw/sum(cw))
+#        for cntr,i in enumerate(class_weights):
+#            print("Class {} = {}".format(cntr, i))
+#    else:
+#        print("Class weights calculation failed")
 
 # In[]:
 def augment(image):
