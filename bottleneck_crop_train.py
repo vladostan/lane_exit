@@ -14,10 +14,11 @@ from glob import glob
 import numpy as np
 import datetime
 import sys
+from tqdm import tqdm
 from PIL import Image
 from sklearn.model_selection import train_test_split
 from segmentation_models.backbones import get_preprocessing
-from segmentation_models import Linknet, Linknet_bottleneck_crop
+from segmentation_models import Linknet_bottleneck_crop
 from keras import optimizers, callbacks
 from albumentations import (
     OneOf,
@@ -34,7 +35,7 @@ from albumentations import (
 # In[]: Parameters
 log = False
 visualize = False
-class_weight_counting = True
+class_weight_counting = False
 aug = True
 
 num_classes = 1
@@ -145,22 +146,59 @@ if log:
         pickle.dump(ann_files_test, f)
         
 # In[]: Class weight counting
-#if class_weight_counting:    
-#    cw = np.zeros(num_classes, dtype=np.int64)
-#
-#    for lt in labels_train:
-#        l = get_image(lt, label=True)
-#        
-#        for i in range(num_classes):
-#            cw[i] += np.count_nonzero(l==i)
-#        
-#    if sum(cw) == len(labels_train)*input_shape[0]*input_shape[1]:
-#        print("Class weights calculated successfully:")
-#        class_weights = np.median(cw/sum(cw))/(cw/sum(cw))
-#        for cntr,i in enumerate(class_weights):
-#            print("Class {} = {}".format(cntr, i))
-#    else:
-#        print("Class weights calculation failed")
+def cw_count(ann_files):
+    print("Class weight calculation started")
+    cw_seg = np.zeros(num_classes+1, dtype=np.int64)
+    cw_cl = np.zeros(num_classes+1, dtype=np.int64)
+
+    for af in tqdm(ann_files):
+        # CLASSIFICATION:
+        with open(af) as json_file:
+            data = json.load(json_file)
+            tags = data['tags']
+    
+        y1 = 0
+        if len(tags) > 0:
+            for tag in range(len(tags)):
+                tag_name = tags[tag]['name']
+                if tag_name == 'offlane':
+                    value = tags[tag]['value']
+                    if value == '1':
+                        y1 = 1
+                        break
+               
+        # SEGMENTATION:
+        label_path = af.replace('/ann/', '/masks_machine/').split('.json')[0]
+        l = get_image(label_path, label = True, resize = True if resize else False) == object_color['direct'][0]
+        
+        for i in range(num_classes+1):
+            cw_seg[i] += np.count_nonzero(l==i)
+            cw_cl[i] += np.count_nonzero(y1==i)
+        
+    if sum(cw_cl) == len(ann_files):
+        print("Class weights for classification calculated successfully:")
+        class_weights_cl = np.median(cw_cl/sum(cw_cl))/(cw_cl/sum(cw_cl))
+        for cntr,i in enumerate(class_weights_cl):
+            print("Class {} = {}".format(cntr, i))
+    else:
+        print("Class weights for classification calculation failed")
+        
+    if sum(cw_seg) == len(ann_files)*input_shape[0]*input_shape[1]:
+        print("Class weights for segmentation calculated successfully:")
+        class_weights_seg = np.median(cw_seg/sum(cw_seg))/(cw_seg/sum(cw_seg))
+        for cntr,i in enumerate(class_weights_seg):
+            print("Class {} = {}".format(cntr, i))
+    else:
+        print("Class weights for segmentation calculation failed")
+        
+    return class_weights_cl, class_weights_seg
+        
+if class_weight_counting:
+    class_weights_cl_train, class_weights_seg_train = cw_count(ann_files_train)
+    if val_size > 0:
+        class_weights_cl_val, class_weights_seg_val = cw_count(ann_files_val)
+    if test_size > 0:
+        class_weights_cl_test, class_weights_seg_test = cw_count(ann_files_test)
 
 # In[]:
 def augment(image):
