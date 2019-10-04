@@ -1,5 +1,5 @@
 # Segmification
 https://youtu.be/YvpXDuOpV_w
 
-https://docs.google.com/viewer?url=https://raw.githubusercontent.com/degoes-consulting/lambdaconf-2015/master/speakers/jdegoes/intro-purescript/presentation.pdf
+https://drive.google.com/open?id=1Bb07B4-BqIlzC-0EY3yy-WTuK86kRfKC
 
