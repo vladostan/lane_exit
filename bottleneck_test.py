@@ -323,7 +323,7 @@ for aft in tqdm(ann_files_test):
         vis_pred = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*np.squeeze(y2_pred > 0.5).astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
         cv2.putText(vis_pred, 'Prediction', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
         if y1_pred:
-            cv2.putText(vis_pred, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
+            cv2.putText(vis_pred, 'OFF LANE', (240,30), font, fontScale, (255,0,0), lineType)
         
         vis_true = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*y2_true.astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
         cv2.putText(vis_true, 'Ground Truth', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
