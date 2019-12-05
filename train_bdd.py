@@ -8,14 +8,11 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 # In[]: Imports
 import json
-import pickle
 import matplotlib.pylab as plt
-from glob import glob
 import numpy as np
 import datetime
 import sys
 from keras.utils import to_categorical
-from tqdm import tqdm
 from PIL import Image
 from sklearn.model_selection import train_test_split
 import segmentation_models as sm
@@ -32,27 +29,32 @@ from albumentations import (
     CLAHE
 )
 
+import tensorflow as tf
+from keras import backend as k
+ 
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+k.tensorflow_backend.set_session(tf.Session(config=config))
+
 # In[]: Parameters
-log = False
-visualize = True
-class_weight_counting = False
+log = True
+visualize = False
 aug = False
 
 classification_classes = 4
 segmentation_classes = 3
 
-resize = True
-input_shape = (360, 640, 3) if resize else (720, 1280, 3)
+input_shape = (320, 640, 3)
 
 backbone = 'resnet50'
 
 random_state = 28
 
 batch_factor = 1
-batch_size_init = 8
+batch_size_init = 12
 batch_size = batch_size_init//batch_factor
 
-verbose = 1
+verbose = 2
 
 # In[]: Logger
 now = datetime.datetime.now()
@@ -75,86 +77,78 @@ if log:
     sys.stdout = Logger()
 
 print('Date and time: {}\n'.format(loggername))
-print("LOG: {}\nAUG: {}\nCLASSIFICATION CLASSES: {}\nSEGMENTATION CLASSES: {}\nRESIZE: {}\nINPUT SHAPE: {}\nBACKBONE: {}\nRANDOM STATE: {}\nBATCH SIZE: {}\n".format(log, aug, classification_classes, segmentation_classes, resize, input_shape, backbone, random_state, batch_size))
+print("LOG: {}\nAUG: {}\nCLASSIFICATION CLASSES: {}\nSEGMENTATION CLASSES: {}\nINPUT SHAPE: {}\nBACKBONE: {}\nRANDOM STATE: {}\nBATCH SIZE: {}\n".format(log, aug, classification_classes, segmentation_classes, input_shape, backbone, random_state, batch_size))
 
 # In[]:
-dataset_dir = "../../datasets/bdd/bdd100k/"
+dataset_dir = "../../datasets/bdd/"
 
-ann_files_train_val = [f for f in glob(dataset_dir + "labels/100k/train/" + '*.json', recursive=True)]
-ann_files_train_val.sort()
-
-ann_files_test = [f for f in glob(dataset_dir + "labels/100k/val/" + '*.json', recursive=True)]
-ann_files_test.sort()
-    
-print("TOTAL TRAIN + VALIDATION FILES COUNT: {}\n".format(len(ann_files_train_val)))
-print("TOTAL TEST FILES COUNT: {}\n".format(len(ann_files_test)))
+#ann_file_train_val = dataset_dir + "labels/" + 'bdd100k_labels_images_train_part.json'
+ann_file_train_val = dataset_dir + "labels/" + 'bdd100k_labels_images_train.json'
+#ann_file_test = dataset_dir + "labels/" + 'bdd100k_labels_images_val.json'    
 
 # In[]:
-def get_image(path, resize = False):
+def get_image(path):
     img = Image.open(path)
-    if resize:
-        img = img.resize(input_shape[:2][::-1])
+    img = img.resize((640,360))
     img = np.array(img)
     return img[20:-20]
 
-i = 10
+with open(ann_file_train_val) as json_file:
+    data_train_val = json.load(json_file)
+    
+#with open(ann_file_test) as json_file:
+#    data_test = json.load(json_file)
+    
+# In[]:
+i = 75
 
-with open(ann_files_train_val[i]) as json_file:
-    data = json.load(json_file)
+data = data_train_val[i]
+
+attributes = data['attributes']
+scene = attributes['scene']
+timeofday = attributes['timeofday']
+weather = attributes['weather']
+
+labels = data['labels']
+for label in labels:
+    category = label['category']
+    attributes = label['attributes']
+    if category == 'drivable area':
+        if attributes['areaType'] == 'direct':
+            print("direct")
+        elif attributes['areaType'] == 'alternative':
+            print("alternative")
     
-    attributes = data['attributes']
-    scene = attributes['scene']
-    timeofday = attributes['timeofday']
-    weather = attributes['weather']
-    
-    frames = data['frames'][0]
-    objects = frames['objects']
-    for obj in objects:
-        category = obj['category']
-        id_ = obj['id']
-        if category == 'area/drivable':
-            print(str(id_) + " drivable")
-        if category == 'area/alternative':
-            print(str(id_) + " alternative")
-        
-    timestamp = frames['timestamp']
-    
-    name = data['name']
-    
-img_path = ann_files_train_val[i].replace('labels','images').replace('json', 'jpg')
-label_path = ann_files_train_val[i].replace('labels/100k','drivable_maps/labels').replace('.json', '') + "_drivable_id.png"
+name = data['name']
+
+img_path = dataset_dir + 'images/train/' + name
+label_path = dataset_dir + 'drivable_maps/labels/train/' + name.split('.jpg')[0] + "_drivable_id.png"
 
 print("Images dtype: {}".format(get_image(img_path).dtype))
 print("Labels dtype: {}\n".format(get_image(label_path).dtype))
-print("Images shape: {}".format(get_image(img_path, resize = True if resize else False).shape))
-print("Labels shape: {}\n".format(get_image(label_path, resize = True if resize else False).shape))
+print("Images shape: {}".format(get_image(img_path).shape))
+print("Labels shape: {}\n".format(get_image(label_path).shape))
 
 # In[]: Visualise
 if visualize:
-    x = get_image(img_path, resize = True if resize else False)
-    y = get_image(label_path, resize = True if resize else False)
+    x = get_image(img_path)
+    y = get_image(label_path)
     fig, axes = plt.subplots(nrows = 2, ncols = 1)
     axes[0].imshow(x)
     axes[1].imshow(y)
     fig.tight_layout()
 
 # In[]: Prepare for training
-val_size = 0.14285
+val_size = 0.10
 
 print("Train:Val split = {}:{}\n".format(1-val_size, val_size))
 
-ann_files_train, ann_files_val = train_test_split(ann_files_train_val, test_size=val_size, random_state=random_state)
-del(ann_files_train_val)
+data_train, data_val = train_test_split(data_train_val, test_size=val_size, random_state=random_state)
+del(data_train_val)
 
-print("Training files count: {}".format(len(ann_files_train)))
-print("Validation files count: {}".format(len(ann_files_val)))
-print("Test files count: {}".format(len(ann_files_test)))
-
-if log:
-    with open('pickles/{}.pickle'.format(loggername), 'wb') as f:
-        pickle.dump(ann_files_train, f)
-        pickle.dump(ann_files_val, f)
-        pickle.dump(ann_files_test, f)
+print("Training files count: {}".format(len(data_train)))
+print("Validation files count: {}".format(len(data_val)))
+#print("Test files count: {}".format(len(data_test)))
 
 # In[]:
 def augment(image):
@@ -190,11 +184,12 @@ def train_generator(files, preprocessing_fn = None, aug = False, batch_size = 1)
             
             if i == len(files):
                 i = 0
+                
+            data = files[i]
+            timeofday = data['attributes']['timeofday']              
+            name = data['name']
                                 
-            x = get_image(files[i].replace('labels','images').replace('json', 'jpg'), resize = True if resize else False)
-            
-            with open(files[i]) as json_file:
-                timeofday = json.load(json_file)['attributes']['timeofday']              
+            x = get_image(dataset_dir + 'images/train/' + name)
 
             if timeofday == "undefined":
                 y1 = 0
@@ -207,7 +202,9 @@ def train_generator(files, preprocessing_fn = None, aug = False, batch_size = 1)
             else:
                 raise ValueError("Impossible value for time of day class")
 
-            y2 = get_image(files[i].replace('labels/100k','drivable_maps/labels').replace('.json', '') + "_drivable_id.png", resize = True if resize else False)
+            y1 = to_categorical(y1, num_classes=classification_classes)
+
+            y2 = get_image(dataset_dir + 'drivable_maps/labels/train/' + name.split('.jpg')[0] + "_drivable_id.png")
             
             x_batch[batch_factor*b] = x
             y1_batch[batch_factor*b] = y1
@@ -244,10 +241,11 @@ def val_generator(files, preprocessing_fn = None, batch_size = 1):
             if i == len(files):
                 i = 0
                 
-            x = get_image(files[i].replace('labels','images').replace('json', 'jpg'), resize = True if resize else False)
-            
-            with open(files[i]) as json_file:
-                timeofday = json.load(json_file)['attributes']['timeofday']              
+            data = files[i]
+            timeofday = data['attributes']['timeofday']              
+            name = data['name']
+                                
+            x = get_image(dataset_dir + 'images/train/' + name)
 
             if timeofday == "undefined":
                 y1 = 0
@@ -259,8 +257,10 @@ def val_generator(files, preprocessing_fn = None, batch_size = 1):
                 y1 = 3
             else:
                 raise ValueError("Impossible value for time of day class")
-                        
-            y2 = get_image(files[i].replace('labels/100k','drivable_maps/labels').replace('.json', '') + "_drivable_id.png", resize = True if resize else False)
+            
+            y1 = to_categorical(y1, num_classes=classification_classes)
+
+            y2 = get_image(dataset_dir + 'drivable_maps/labels/train/' + name.split('.jpg')[0] + "_drivable_id.png")
             
             x_batch[b] = x
             y1_batch[b] = y1
@@ -279,18 +279,18 @@ def val_generator(files, preprocessing_fn = None, batch_size = 1):
 # In[]:
 preprocessing_fn = sm.get_preprocessing(backbone)
 
-train_gen = train_generator(files = ann_files_train, 
+train_gen = train_generator(files = data_train, 
                              preprocessing_fn = preprocessing_fn, 
                              aug = aug,
                              batch_size = batch_size)
 
 if val_size > 0:
-    val_gen = val_generator(files = ann_files_val, 
+    val_gen = val_generator(files = data_val, 
                              preprocessing_fn = preprocessing_fn, 
                              batch_size = batch_size_init)
 
 # In[]: Bottleneck
-model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=(320,640,3), classification_classes=classification_classes, segmentation_classes = segmentation_classes, classification_activation = 'softmax', segmentation_activation='sigmoid')
+model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classification_classes=classification_classes, segmentation_classes = segmentation_classes, classification_activation = 'softmax', segmentation_activation='softmax')
 model.summary()
 
 # In[]: 
@@ -333,8 +333,8 @@ for c in clbacks:
     print("{}".format(c))
 
 # In[]: 
-steps_per_epoch = len(ann_files_train)//batch_size
-validation_steps = len(ann_files_val)//batch_size
+steps_per_epoch = len(data_train)//batch_size
+validation_steps = len(data_val)//batch_size
 epochs = 1000
 
 print("Steps per epoch: {}".format(steps_per_epoch))
