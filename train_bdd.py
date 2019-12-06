@@ -29,12 +29,12 @@ from albumentations import (
     CLAHE
 )
 
-import tensorflow as tf
-from keras import backend as k
+#import tensorflow as tf
+#from keras import backend as k
  
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-k.tensorflow_backend.set_session(tf.Session(config=config))
+#config = tf.ConfigProto()
+#config.gpu_options.allow_growth = True
+#k.tensorflow_backend.set_session(tf.Session(config=config))
 
 # In[]: Parameters
 log = True
@@ -47,6 +47,10 @@ segmentation_classes = 3
 input_shape = (320, 640, 3)
 
 backbone = 'resnet50'
+
+load_weights = True
+if load_weights:
+    weights = "2019-12-05 16-25-45"
 
 random_state = 28
 
@@ -291,6 +295,11 @@ if val_size > 0:
 
 # In[]: Bottleneck
 model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classification_classes=classification_classes, segmentation_classes = segmentation_classes, classification_activation = 'softmax', segmentation_activation='softmax')
+
+if load_weights:
+    print("\nLoading model weights: {}".format(weights))
+    model.load_weights('weights/' + weights + '.hdf5')
+
 model.summary()
 
 # In[]: 
@@ -309,7 +318,8 @@ optimizer = optimizers.Adam(lr = 1e-4)
 model.compile(optimizer=optimizer, loss=losses, loss_weights=loss_weights, metrics=["accuracy"])
 
 # In[]:
-monitor = 'val_' if val_size > 0 else ''
+#monitor = 'val_' if val_size > 0 else ''
+monitor = 'val_segmentation_output_'
 
 reduce_lr = callbacks.ReduceLROnPlateau(monitor = monitor+'loss', factor = 0.5, patience = 5, verbose = 1, min_lr = 1e-8)
 early_stopper = callbacks.EarlyStopping(monitor = monitor+'loss', patience = 10, verbose = 1)
