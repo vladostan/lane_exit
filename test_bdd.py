@@ -36,7 +36,8 @@ batch_size = 1
 
 verbose = 1
 
-weights = "2019-12-05 16-25-45"
+#weights = "2019-12-05 16-25-45"
+weights = "2019-12-06 10-28-15"
 
 # In[]:
 dataset_dir = "../../datasets/bdd/"
