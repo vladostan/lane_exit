@@ -15,16 +15,16 @@ from glob import glob
 import numpy as np
 from PIL import Image
 from sklearn.model_selection import train_test_split
-from segmentation_models.backbones import get_preprocessing
-from segmentation_models import Linknet_bottleneck_crop
+import segmentation_models as sm
 from keras import optimizers
 import cv2
 
 # In[]: Parameters
-visualize = False
+visualize = True
 save_results = True
 
-num_classes = 1
+classification_classes = 1
+segmentation_classes = 1
 
 resize = True
 input_shape = (256, 640, 3) if resize else (512, 1280, 3)
@@ -177,7 +177,7 @@ def val_generator(files, preprocessing_fn = None, batch_size = 1):
         yield (x_batch, y_batch)
         
 # In[]:
-preprocessing_fn = get_preprocessing(backbone)
+preprocessing_fn = sm.get_preprocessing(backbone)
 
 predict_gen = predict_generator(files = ann_files_test, 
                              preprocessing_fn = preprocessing_fn, 
@@ -188,7 +188,8 @@ eval_gen = val_generator(files = ann_files_test,
                              batch_size = batch_size)
 
 # In[]: Bottleneck
-model = Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classes=num_classes, activation='sigmoid')
+model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classification_classes=classification_classes, segmentation_classes = segmentation_classes, classification_activation = 'sigmoid', segmentation_activation='sigmoid')
+
 model.load_weights('weights/' + weights + '.hdf5')
 
 # In[]: 
@@ -270,10 +271,10 @@ print("OFFLANE GT: {}".format(bool(y1_true)))
 # In[]:
 if save_results:
     font                   = cv2.FONT_HERSHEY_SIMPLEX
-    bottomLeftCornerOfText = (5,30)
     fontScale              = 1
     fontColor              = (255,255,255)
     lineType               = 2
+    textPosition           = (5,30)
 
 from metrics import tpfpfn, Accuracy, Precision, Recall, IU, F1, TNR, NPV, FPR, FDR, FNR, BACC
 
@@ -292,7 +293,7 @@ mBACC_ = 0
 dlina = len(ann_files_test)
     
 for aft in tqdm(ann_files_test):
-    
+        
     x = get_image(aft.replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
     x_vis = x.copy()
     x = preprocessing_fn(x)
@@ -321,14 +322,28 @@ for aft in tqdm(ann_files_test):
     
     if save_results:
         vis_pred = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*np.squeeze(y2_pred > 0.5).astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
-        cv2.putText(vis_pred, 'Prediction', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+
         if y1_pred:
-            cv2.putText(vis_pred, 'OFF LANE', (240,30), font, fontScale, (255,0,0), lineType)
+            text = 'Prediction: OFF LANE'
+        else:
+            text = 'Prediction: IN LANE'
+            
+        (text_width, text_height) = cv2.getTextSize(text, font, fontScale=fontScale, thickness=1)[0]
+        box_coords = ((textPosition[0] - 10, textPosition[1] + 10), (textPosition[0] + text_width + 5, textPosition[1] - text_height - 10))
+        cv2.rectangle(vis_pred, box_coords[0], box_coords[1], (0,0,0), cv2.FILLED)
+        cv2.putText(vis_pred, text, textPosition, font, fontScale, fontColor, lineType)
         
         vis_true = cv2.addWeighted(x_vis,1,cv2.applyColorMap(255//2*y2_true.astype(np.uint8),cv2.COLORMAP_OCEAN),1,0)
-        cv2.putText(vis_true, 'Ground Truth', bottomLeftCornerOfText, font, fontScale, fontColor, lineType)
+
         if y1_true:
-            cv2.putText(vis_true, 'OFFLANE', (500,30), font, fontScale, (255,0,0), lineType)
+            text = 'Ground Truth: OFF LANE'
+        else:
+            text = 'Ground Truth: IN LANE'
+            
+        (text_width, text_height) = cv2.getTextSize(text, font, fontScale=fontScale, thickness=1)[0]
+        box_coords = ((textPosition[0] - 10, textPosition[1] + 10), (textPosition[0] + text_width + 5, textPosition[1] - text_height - 10))
+        cv2.rectangle(vis_true, box_coords[0], box_coords[1], (0,0,0), cv2.FILLED)
+        cv2.putText(vis_true, text, textPosition, font, fontScale, fontColor, lineType)
                  
         if not os.path.exists("results/{}".format(weights)):
             os.mkdir("results/{}".format(weights))
