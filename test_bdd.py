@@ -19,7 +19,7 @@ import cv2
 
 # In[]: Parameters
 visualize = False
-save_results = True
+save_results = False
 
 if save_results:
     save_num = 100
@@ -109,31 +109,51 @@ if save_results:
 
 from metrics import mAccuracy, mPrecision, mRecall, mIU, mF1, tpfpfn, Accuracy, Precision, Recall, IU, F1
 
-mAccuracy_1 = 0
-mPrecision_1 = 0
-mRecall_1 = 0
-mIU_1 = 0
-mF1_1 = 0
+# For each class in classification
+TP_0 = 0
+FP_0 = 0
+FN_0 = 0
+TN_0 = 0
 
-mAccuracy_2 = 0
-mPrecision_2 = 0
-mRecall_2 = 0
-mIU_2 = 0
-mF1_2 = 0
+TP_1 = 0
+FP_1 = 0
+FN_1 = 0
+TN_1 = 0
+
+TP_2 = 0
+FP_2 = 0
+FN_2 = 0
+TN_2 = 0
+
+TP_3 = 0
+FP_3 = 0
+FN_3 = 0
+TN_3 = 0
+
+TP_mean = 0
+FP_mean = 0
+FN_mean = 0
+TN_mean = 0
+
+mAccuracy_segm = 0
+mPrecision_segm = 0
+mRecall_segm = 0
+mIU_segm = 0
+mF1_segm = 0
 
 dlina = len(data_test)
     
 for i, data in tqdm(enumerate(data_test)):
-    
+        
     timeofday = data['attributes']['timeofday']
     if timeofday == "undefined":
-        y1_true = 0
+        y1_true = np.int64(0)
     elif timeofday == "daytime":
-        y1_true = 1
+        y1_true = np.int64(1)
     elif timeofday == "dawn/dusk":
-        y1_true = 2
+        y1_true = np.int64(2)
     elif timeofday == "night":
-        y1_true = 3
+        y1_true = np.int64(3)
     else:
         raise ValueError("Impossible value for time of day class")
                 
@@ -180,36 +200,113 @@ for i, data in tqdm(enumerate(data_test)):
             os.mkdir("results/{}".format(weights))
             
         cv2.imwrite("results/{}/{}.png".format(weights, name.split('.jpg')[0]), cv2.cvtColor(np.vstack((vis_pred, vis_true)), cv2.COLOR_BGR2RGB))
-    
-    y1_true = to_categorical(y1_true, num_classes=classification_classes)
-    y1_true = y1_true.astype('int64')  
-    
+        
     y1_pred = to_categorical(y1_pred, num_classes=classification_classes)
-    y1_pred = y1_pred.astype('int64')  
-
-    TP, FP, FN, TN = tpfpfn(y1_pred, y1_true)
-    mAccuracy_1 += Accuracy(TP, FP, FN, TN)/dlina
-    mPrecision_1 += Precision(TP, FP)/dlina
-    mRecall_1 += Recall(TP, FN)/dlina
-    mIU_1 += IU(TP, FP, FN)/dlina
-    mF1_1 += F1(TP, FP, FN)/dlina
+    y1_true = to_categorical(y1_true, num_classes=classification_classes)
+    
+    for cl in range(classification_classes):
+        TP, FP, FN, TN = tpfpfn(y1_pred[cl], y1_true[cl])
+        if cl == 0:
+            TP_0 += TP
+            FP_0 += FP
+            FN_0 += FN
+            TN_0 += TN
+        elif cl == 1:
+            TP_1 += TP
+            FP_1 += FP
+            FN_1 += FN
+            TN_1 += TN
+        elif cl == 2:
+            TP_2 += TP
+            FP_2 += FP
+            FN_2 += FN
+            TN_2 += TN
+        elif cl == 3:
+            TP_3 += TP
+            FP_3 += FP
+            FN_3 += FN
+            TN_3 += TN
+        TP_mean += TP
+        FP_mean += FP
+        FN_mean += FN
+        TN_mean += TN
 
     y2_true = y2_true.astype('int64')  
     
-    mAccuracy_2 += mAccuracy(y2_pred, y2_true)/dlina
-    mPrecision_2 += mPrecision(y2_pred, y2_true)/dlina
-    mRecall_2 += mRecall(y2_pred, y2_true)/dlina
-    mIU_2 += mIU(y2_pred, y2_true)/dlina
-    mF1_2 += mF1(y2_pred, y2_true)/dlina
+    mAccuracy_segm += mAccuracy(y2_pred, y2_true, num_classes=segmentation_classes)/dlina
+    mPrecision_segm += mPrecision(y2_pred, y2_true, num_classes=segmentation_classes)/dlina
+    mRecall_segm += mRecall(y2_pred, y2_true, num_classes=segmentation_classes)/dlina
+    mIU_segm += mIU(y2_pred, y2_true, num_classes=segmentation_classes)/dlina
+    mF1_segm += mF1(y2_pred, y2_true, num_classes=segmentation_classes)/dlina
    
-print("CLASS accuracy: {}".format(mAccuracy_1))
-print("CLASS precision: {}".format(mPrecision_1))
-print("CLASS recall: {}".format(mRecall_1))
-print("CLASS iu: {}".format(mIU_1))
-print("CLASS f1: {}".format(mF1_1))
+mAccuracy_0 = Accuracy(TP_0, FP_0, FN_0, TN_0)
+mPrecision_0 = Precision(TP_0, FP_0)
+mRecall_0 = Recall(TP_0, FN_0)
+mIU_0 = IU(TP_0, FP_0, FN_0)
+mF1_0 = F1(TP_0, FP_0, FN_0)
 
-print("MASK accuracy: {}".format(mAccuracy_2))
-print("MASK precision: {}".format(mPrecision_2))
-print("MASK recall: {}".format(mRecall_2))
-print("MASK iu: {}".format(mIU_2))
-print("MASK f1: {}".format(mF1_2))
+mAccuracy_1 = Accuracy(TP_1, FP_1, FN_1, TN_1)
+mPrecision_1 = Precision(TP_1, FP_1)
+mRecall_1 = Recall(TP_1, FN_1)
+mIU_1 = IU(TP_1, FP_1, FN_1)
+mF1_1 = F1(TP_1, FP_1, FN_1)
+
+mAccuracy_2 = Accuracy(TP_2, FP_2, FN_2, TN_2)
+mPrecision_2 = Precision(TP_2, FP_2)
+mRecall_2 = Recall(TP_2, FN_2)
+mIU_2 = IU(TP_2, FP_2, FN_2)
+mF1_2 = F1(TP_2, FP_2, FN_2)
+
+mAccuracy_3 = Accuracy(TP_3, FP_3, FN_3, TN_3)
+mPrecision_3 = Precision(TP_3, FP_3)
+mRecall_3 = Recall(TP_3, FN_3)
+mIU_3 = IU(TP_3, FP_3, FN_3)
+mF1_3 = F1(TP_3, FP_3, FN_3)
+
+print("CLASS 0 accuracy: {}".format(mAccuracy_0))
+print("CLASS 0 precision: {}".format(mPrecision_0))
+print("CLASS 0 recall: {}".format(mRecall_0))
+print("CLASS 0 iu: {}".format(mIU_0))
+print("CLASS 0 f1: {}".format(mF1_0))
+
+print("CLASS 1 accuracy: {}".format(mAccuracy_1))
+print("CLASS 1 precision: {}".format(mPrecision_1))
+print("CLASS 1 recall: {}".format(mRecall_1))
+print("CLASS 1 iu: {}".format(mIU_1))
+print("CLASS 1 f1: {}".format(mF1_1))
+
+print("CLASS 2 accuracy: {}".format(mAccuracy_2))
+print("CLASS 2 precision: {}".format(mPrecision_2))
+print("CLASS 2 recall: {}".format(mRecall_2))
+print("CLASS 2 iu: {}".format(mIU_2))
+print("CLASS 2 f1: {}".format(mF1_2))
+
+print("CLASS 3 accuracy: {}".format(mAccuracy_3))
+print("CLASS 3 precision: {}".format(mPrecision_3))
+print("CLASS 3 recall: {}".format(mRecall_3))
+print("CLASS 3 iu: {}".format(mIU_3))
+print("CLASS 3 f1: {}".format(mF1_3))
+
+#mAccuracy_mean = (mAccuracy_0 + mAccuracy_1 + mAccuracy_2 + mAccuracy_3)/4
+#mPrecision_mean = (mPrecision_0 + mPrecision_1 + mPrecision_2 + mPrecision_3)/4
+#mRecall_mean = (mRecall_0 + mRecall_1 + mRecall_2 + mRecall_2)/4
+#mIU_mean = (mIU_0 + mIU_1 + mIU_2 + mIU_3)/4
+#mF1_mean = (mF1_0 + mF1_1 + mF1_2 + mF1_3)/4
+
+mAccuracy_mean = Accuracy(TP_mean, FP_mean, FN_mean, TN_mean)
+mPrecision_mean = Precision(TP_mean, FP_mean)
+mRecall_mean = Recall(TP_mean, FN_mean)
+mIU_mean = IU(TP_mean, FP_mean, FN_mean)
+mF1_mean = F1(TP_mean, FP_mean, FN_mean)
+
+print("CLASS MEAN accuracy: {}".format(mAccuracy_mean))
+print("CLASS MEAN precision: {}".format(mPrecision_mean))
+print("CLASS MEAN recall: {}".format(mRecall_mean))
+print("CLASS MEAN iu: {}".format(mIU_mean))
+print("CLASS MEAN f1: {}".format(mF1_mean))
+
+print("MASK accuracy: {}".format(mAccuracy_segm))
+print("MASK precision: {}".format(mPrecision_segm))
+print("MASK recall: {}".format(mRecall_segm))
+print("MASK iu: {}".format(mIU_segm))
+print("MASK f1: {}".format(mF1_segm))

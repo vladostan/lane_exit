@@ -109,67 +109,82 @@ def BACC(TP, FP, FN, TN):
     return BACC
 ###########################
 
-def mAccuracy(y_pred, y_true):
+def mAccuracy(y_pred, y_true, num_classes, background = False):
     
     mAccuracy = 0
     
+    start = 0 if background else 1
+    stop = num_classes
+    
     # Calculate per class, ignoring background
-    for cl in range(1,3):
-        pred_labels = to_categorical(y_pred, num_classes=3)[...,cl]
-        true_labels = to_categorical(y_true, num_classes=3)[...,cl]
+    for cl in range(start,stop):
+        pred_labels = to_categorical(y_pred, num_classes=num_classes)[...,cl]
+        true_labels = to_categorical(y_true, num_classes=num_classes)[...,cl]
         TP, FP, FN, TN = tpfpfn(pred_labels, true_labels)
-        mAccuracy += Accuracy(TP, FP, FN, TN)/2
+        mAccuracy += Accuracy(TP, FP, FN, TN)/(stop-start)
         
     return mAccuracy
 
-def mPrecision(y_pred, y_true):
+def mPrecision(y_pred, y_true, num_classes, background = False):
     
     mPrecision = 0
     
+    start = 0 if background else 1
+    stop = num_classes
+    
     # Calculate per class, ignoring background
-    for cl in range(1,3):
-        pred_labels = to_categorical(y_pred, num_classes=3)[...,cl]
-        true_labels = to_categorical(y_true, num_classes=3)[...,cl]
+    for cl in range(start,stop):
+        pred_labels = to_categorical(y_pred, num_classes=num_classes)[...,cl]
+        true_labels = to_categorical(y_true, num_classes=num_classes)[...,cl]
         TP, FP, _, _ = tpfpfn(pred_labels, true_labels)
-        mPrecision += Precision(TP, FP)/2
+        mPrecision += Precision(TP, FP)/(stop-start)
         
     return mPrecision
 
-def mRecall(y_pred, y_true):
+def mRecall(y_pred, y_true, num_classes, background = False):
     
     mRecall = 0
     
+    start = 0 if background else 1
+    stop = num_classes
+    
     # Calculate per class, ignoring background
-    for cl in range(1,3):
-        pred_labels = to_categorical(y_pred, num_classes=3)[...,cl]
-        true_labels = to_categorical(y_true, num_classes=3)[...,cl]
+    for cl in range(start,stop):
+        pred_labels = to_categorical(y_pred, num_classes=num_classes)[...,cl]
+        true_labels = to_categorical(y_true, num_classes=num_classes)[...,cl]
         TP, _, FN, _ = tpfpfn(pred_labels, true_labels)
-        mRecall += Recall(TP, FN)/2
+        mRecall += Recall(TP, FN)/(stop-start)
         
     return mRecall
 
-def mIU(y_pred, y_true):
+def mIU(y_pred, y_true, num_classes, background = False):
     
     mIU = 0
     
+    start = 0 if background else 1
+    stop = num_classes
+    
     # Calculate per class, ignoring background
-    for cl in range(1,3):
-        pred_labels = to_categorical(y_pred, num_classes=3)[...,cl]
-        true_labels = to_categorical(y_true, num_classes=3)[...,cl]
+    for cl in range(start,stop):
+        pred_labels = to_categorical(y_pred, num_classes=num_classes)[...,cl]
+        true_labels = to_categorical(y_true, num_classes=num_classes)[...,cl]
         TP, FP, FN, _ = tpfpfn(pred_labels, true_labels)
-        mIU += IU(TP, FP, FN)/2
+        mIU += IU(TP, FP, FN)/(stop-start)
         
     return mIU
 
-def mF1(y_pred, y_true):
+def mF1(y_pred, y_true, num_classes, background = False):
     
     mF1 = 0
+    
+    start = 0 if background else 1
+    stop = num_classes
 
     # Calculate per class, ignoring background
-    for cl in range(1,3):
-        pred_labels = to_categorical(y_pred, num_classes=3)[...,cl]
-        true_labels = to_categorical(y_true, num_classes=3)[...,cl]
+    for cl in range(start,stop):
+        pred_labels = to_categorical(y_pred, num_classes=num_classes)[...,cl]
+        true_labels = to_categorical(y_true, num_classes=num_classes)[...,cl]
         TP, FP, FN, _ = tpfpfn(pred_labels, true_labels)
-        mF1 += F1(TP, FP, FN)/2
+        mF1 += F1(TP, FP, FN)/(stop-start)
 
     return mF1

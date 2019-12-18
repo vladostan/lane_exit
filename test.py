@@ -20,8 +20,8 @@ from keras import optimizers
 import cv2
 
 # In[]: Parameters
-visualize = True
-save_results = True
+visualize = False
+save_results = False
 
 classification_classes = 1
 segmentation_classes = 1
@@ -36,17 +36,12 @@ batch_size = 1
 
 verbose = 1
 
-#weights = "2019-09-27 17-40-50"
-#weights = "2019-09-27 17-41-40"
-#weights = "2019-09-27 17-44-01"
-
 weights = "2019-09-30 17-32-13"
 #weights = "2019-09-30 17-33-02" 
 
 # In[]:
 dataset_dir = "../../../colddata/datasets/supervisely/kamaz/kisi/"
-#subdirs = ["2019-04-24", "2019-05-08", "2019-05-15"]
-#subdirs = ["2019-05-20"]
+
 subdirs = ["2019-04-24", "2019-05-08", "2019-05-15", "2019-05-20"]
 
 obj_class_to_machine_color = dataset_dir + "obj_class_to_machine_color.json"
@@ -102,94 +97,12 @@ with open('pickles/{}.pickle'.format(weights), 'rb') as f:
     ann_files_train = pickle.load(f)
     ann_files_val = pickle.load(f)
     ann_files_test = pickle.load(f)
-    
-# In[]: 
-def predict_generator(files, preprocessing_fn = None, batch_size = 1):
-    
-    i = 0
-    
-    while True:
-        
-        x_batch = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
-        
-        for b in range(batch_size):
-            
-            if i == len(files):
-                i = 0
-                
-            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
-            
-            x_batch[b] = x
-                
-            i += 1
-            
-        x_batch = preprocessing_fn(x_batch)
-            
-        yield x_batch
-        
-        
-def val_generator(files, preprocessing_fn = None, batch_size = 1):
-    
-    i = 0
-    
-    while True:
-        
-        x_batch = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
-        y1_batch = np.zeros((batch_size, num_classes), dtype=np.int64)
-        y2_batch = np.zeros((batch_size, input_shape[0], input_shape[1]))
-        
-        for b in range(batch_size):
-            
-            if i == len(files):
-                i = 0
-                
-            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
-            
-            with open(ann_files[i]) as json_file:
-                data = json.load(json_file)
-                tags = data['tags']
-
-            y1 = 0
-            if len(tags) > 0:
-                for tag in range(len(tags)):
-                    tag_name = tags[tag]['name']
-                    if tag_name == 'offlane':
-                        value = tags[tag]['value']
-                        if value == '1':
-                            y1 = 1
-                            break
-                        
-            y2 = get_image(ann_files[i].replace('/ann/', '/masks_machine/').split('.json')[0], label=True, resize = True if resize else False)
-            y2 = y2 == object_color['direct'][0]
-            
-            x_batch[b] = x
-            y1_batch[b] = y1
-            y2_batch[b] = y2
-                
-            i += 1
-            
-        x_batch = preprocessing_fn(x_batch)
-        y2_batch = np.expand_dims(y2_batch, axis = -1)
-        y2_batch = y2_batch.astype('int64')
-    
-        y_batch = {'classification_output': y1_batch, 'segmentation_output': y2_batch}
-        
-        yield (x_batch, y_batch)
         
 # In[]:
 preprocessing_fn = sm.get_preprocessing(backbone)
 
-predict_gen = predict_generator(files = ann_files_test, 
-                             preprocessing_fn = preprocessing_fn, 
-                             batch_size = batch_size)
-
-eval_gen = val_generator(files = ann_files_test, 
-                             preprocessing_fn = preprocessing_fn, 
-                             batch_size = batch_size)
-
 # In[]: Bottleneck
 model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classification_classes=classification_classes, segmentation_classes = segmentation_classes, classification_activation = 'sigmoid', segmentation_activation='sigmoid')
-
 model.load_weights('weights/' + weights + '.hdf5')
 
 # In[]: 
@@ -241,34 +154,6 @@ print("OFFLANE PREDICT: {}".format(offlane))
 print("OFFLANE GT: {}".format(bool(y1_true)))
 
 # In[]:
-#steps = len(ann_files_test)//batch_size
-#
-#history = model.evaluate_generator(
-#        generator = eval_gen,
-#        steps = steps,
-#        verbose = verbose
-#        )
-#
-#print(history)
-
-#with open('evaluate.pickle', 'wb') as f:
-#    pickle.dump(history, f)
-    
-# In[]:
-#y_pred = model.predict_generator(
-#        generator = predict_gen,
-#        steps = steps,
-#        verbose = verbose
-#        )
-#
-#with open('predict.pickle', 'wb') as f:
-#    pickle.dump(y_pred, f)
-
-# In[]:
-#y_pred1 = y_pred[1]
-#y_pred2 = y_pred[0]   
-
-# In[]:
 if save_results:
     font                   = cv2.FONT_HERSHEY_SIMPLEX
     fontScale              = 1
@@ -276,19 +161,24 @@ if save_results:
     lineType               = 2
     textPosition           = (5,30)
 
-from metrics import tpfpfn, Accuracy, Precision, Recall, IU, F1, TNR, NPV, FPR, FDR, FNR, BACC
+from metrics import tpfpfn, Accuracy, Precision, Recall, IU, F1
 
-mAccuracy_ = 0
-mPrecision_ = 0
-mRecall_ = 0
-mIU_ = 0
-mF1_ = 0
-mTNR_ = 0
-mNPV_ = 0
-mFPR_ = 0
-mFDR_ = 0
-mFNR_ = 0
-mBACC_ = 0
+TP_1 = 0
+FP_1 = 0
+FN_1 = 0
+TN_1 = 0
+
+mAccuracy_1 = 0
+mPrecision_1 = 0
+mRecall_1 = 0
+mIU_1 = 0
+mF1_1 = 0
+
+mAccuracy_2 = 0
+mPrecision_2 = 0
+mRecall_2 = 0
+mIU_2 = 0
+mF1_2 = 0
 
 dlina = len(ann_files_test)
     
@@ -353,29 +243,34 @@ for aft in tqdm(ann_files_test):
     y2_true = y2_true.astype('int64')  
     y2_pred = np.squeeze(y2_pred > 0.5).astype('int64')
 
-#    TP, FP, FN, TN = tpfpfn(y1_pred, y1_true)
+    TP, FP, FN, TN = tpfpfn(y1_pred, y1_true)
+    TP_1 += TP
+    FP_1 += FP
+    FN_1 += FN
+    TN_1 += TN
+    
     TP, FP, FN, TN = tpfpfn(y2_pred, y2_true)
     
-    mAccuracy_ += Accuracy(TP, FP, FN, TN)/dlina
-    mPrecision_ += Precision(TP, FP)/dlina
-    mRecall_ += Recall(TP, FN)/dlina
-    mIU_ += IU(TP, FP, FN)/dlina
-    mF1_ += F1(TP, FP, FN)/dlina
-    mTNR_ += TNR(TN, FP)/dlina
-    mNPV_ += NPV(TN, FN)/dlina
-    mFPR_ += FPR(FP, TN)/dlina
-    mFDR_ += FDR(FP, TP)/dlina
-    mFNR_ += FNR(FN, TP)/dlina
-    mBACC_ += BACC(TP, FP, FN, TN)/dlina
+    mAccuracy_2 += Accuracy(TP, FP, FN, TN)/dlina
+    mPrecision_2 += Precision(TP, FP)/dlina
+    mRecall_2 += Recall(TP, FN)/dlina
+    mIU_2 += IU(TP, FP, FN)/dlina
+    mF1_2 += F1(TP, FP, FN)/dlina
     
-print("accuracy: {}".format(mAccuracy_))
-print("precision: {}".format(mPrecision_))
-print("recall: {}".format(mRecall_))
-print("iu: {}".format(mIU_))
-print("f1: {}".format(mF1_))
-print("TNR: {}".format(mTNR_))
-print("NPV: {}".format(mNPV_))
-print("FPR: {}".format(mFPR_))
-print("FDR: {}".format(mFDR_))
-print("FNR: {}".format(mFNR_))
-print("BACC: {}".format(mBACC_))
+mAccuracy_1 = Accuracy(TP_1, FP_1, FN_1, TN_1)
+mPrecision_1 = Precision(TP_1, FP_1)
+mRecall_1 = Recall(TP_1, FN_1)
+mIU_1 = IU(TP_1, FP_1, FN_1)
+mF1_1 = F1(TP_1, FP_1, FN_1)
+    
+print("CLASS accuracy: {}".format(mAccuracy_1))
+print("CLASS precision: {}".format(mPrecision_1))
+print("CLASS recall: {}".format(mRecall_1))
+print("CLASS iu: {}".format(mIU_1))
+print("CLASS f1: {}".format(mF1_1))
+
+print("MASK accuracy: {}".format(mAccuracy_2))
+print("MASK precision: {}".format(mPrecision_2))
+print("MASK recall: {}".format(mRecall_2))
+print("MASK iu: {}".format(mIU_2))
+print("MASK f1: {}".format(mF1_2))
