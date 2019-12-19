@@ -107,7 +107,7 @@ if save_results:
     lineType               = 2
     textPosition           = (5,30)
 
-from metrics import mAccuracy, mPrecision, mRecall, mIU, mF1, tpfpfn, Accuracy, Precision, Recall, IU, F1
+from metrics import tpfpfn, Accuracy, Precision, Recall, IU, F1
 
 # For each class in classification
 n_0 = 0

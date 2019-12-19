@@ -20,8 +20,8 @@ from keras import optimizers
 import cv2
 
 # In[]: Parameters
-visualize = False
-save_results = False
+visualize = True
+save_results = True
 
 classification_classes = 1
 segmentation_classes = 1
