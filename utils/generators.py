@@ -2,26 +2,34 @@
 
 import numpy as np
 import json
-from .augmentators import augment, cnnlstm_augment
+from .augmentators import augment
+from .funcs import get_image
+from keras.utils import to_categorical
 
-def train_generator(files, preprocessing_fn = None, aug = False, batch_size = 1):
+def generator(files, preprocess_input_fn, batch_size = 1, input_shape = (256, 640, 3), resize = True, classification_classes = 2, segmentation_classes = 6, do_aug = False, validate = False):
     
     i = 0
     
     while True:
         
-        x_batch = np.zeros((batch_factor*batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
-        y1_batch = np.zeros((batch_factor*batch_size, num_classes), dtype=np.int64)
-        y2_batch = np.zeros((batch_factor*batch_size, input_shape[0], input_shape[1]))
+        x_batch = np.zeros((batch_size, input_shape[0], input_shape[1], 3), dtype=np.uint8)
+        y1_batch = np.zeros((batch_size), dtype=np.int32)
+        y2_batch = np.zeros((batch_size, input_shape[0], input_shape[1]), dtype=np.int32)
         
         for b in range(batch_size):
             
             if i == len(files):
                 i = 0
-                
-            x = get_image(ann_files[i].replace('/ann/', '/img/').split('.json')[0], resize = True if resize else False)
+              
+            # IMAGE
+            x = get_image(path=files[i].replace('/ann/', '/img/').split('.json')[0], input_shape=input_shape, resize=resize)
             
-            with open(ann_files[i]) as json_file:
+            if aug and not validate:
+                x = augment(x)
+            x_batch[b] = x
+            
+            # CLASSIFICATION
+            with open(files[i]) as json_file:
                 data = json.load(json_file)
                 tags = data['tags']
 
@@ -33,26 +41,18 @@ def train_generator(files, preprocessing_fn = None, aug = False, batch_size = 1)
                         value = tags[tag]['value']
                         if value == '1':
                             y1 = 1
-                            break
-                        
-            y2 = get_image(ann_files[i].replace('/ann/', '/masks_machine/').split('.json')[0], label=True, resize = True if resize else False)
-            y2 = y2 == object_color['direct'][0]
-            
-            x_batch[batch_factor*b] = x
-            y1_batch[batch_factor*b] = y1
-            y2_batch[batch_factor*b] = y2
-            
-            if aug == 1:
-                x2 = augment(x)
-                x_batch[batch_factor*b+1] = x2
-                y1_batch[batch_factor*b+1] = y1
-                y2_batch[batch_factor*b+1] = y2
-                
+                            break                    
+            y1_batch[b] = y1
+        
+            # SEGMENTATION
+            y2 = get_image(path=files[i].replace('/ann/', '/masks_vlad/').split('.json')[0], input_shape=input_shape, label=True, resize=resize)
+            y2_batch[b] = y2
+
             i += 1
             
         x_batch = preprocessing_fn(x_batch)
-        y2_batch = np.expand_dims(y2_batch, axis = -1)
-        y2_batch = y2_batch.astype('int64')
+        y1_batch = to_categorical(y1_batch, num_classes=classification_classes).astype(np.int32)
+        y2_batch = to_categorical(y2_batch, num_classes=segmentation_classes).astype(np.int32)
     
         y_batch = {'classification_output': y1_batch, 'segmentation_output': y2_batch}
         

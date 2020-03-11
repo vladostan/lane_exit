@@ -10,7 +10,7 @@ import os
 from tqdm import tqdm
 
 # In[]:
-dataset_dir = "../datasets/supervisely/kisi/"
+dataset_dir = "../../datasets/supervisely/kisi/"
 subdirs = ["2019-04-24", "2019-05-08", "2019-05-15", "2019-05-20", "2019-05-22", "2019-07-12", "2019-08-23"]
 
 ann_files = []
@@ -28,12 +28,13 @@ def get_image(path):
     return img  
 
 # In[]:
-color = {'alternative':50, 'direct':100, 'dashed':150, 'solid':200, 'crosswalk':250}
+color = {'alternative':1, 'direct':2, 'dashed':3, 'solid':4, 'crosswalk':5}
+# color = {'alternative':50, 'direct':100, 'dashed':150, 'solid':200, 'crosswalk':250}
 classes = ['alternative', 'direct', 'lane_marking', 'crosswalk']
 alphabet = "adlcbefghijkmnopqrstuvwxyz_0123456789"
 
 for ann_file in tqdm(ann_files):
-    mask = np.zeros((512, 1280), dtype=np.int32)
+    mask = np.zeros((512, 1280, 3), dtype=np.uint8)
 
     with open(ann_file) as json_file:
         data = json.load(json_file)
@@ -57,9 +58,9 @@ for ann_file in tqdm(ann_files):
                                 c = 'dashed'
 
                 if len(exterior) > 0:
-                    cv2.fillPoly(mask, np.int32([exterior]), (color[c]))
+                    cv2.fillPoly(mask, np.int32([exterior]), (color[c],color[c],color[c]))
                 if len(interior) > 0:
-                    cv2.fillPoly(mask, np.int32([interior]), (0))
+                    cv2.fillPoly(mask, np.int32([interior]), (0,0,0))
                     
     split = ann_file.split('/ann/')
     folder = split[0] + '/masks_vlad'
@@ -71,6 +72,7 @@ for ann_file in tqdm(ann_files):
     plt.imsave(f"{folder}/{fname}", mask)
             
 # In[]:
+i = 0
 img_path = ann_files[i].replace('/ann/', '/img/').split('.json')[0]
 x = get_image(img_path)
 fig, axes = plt.subplots(nrows = 2, ncols = 1)
