@@ -4,7 +4,7 @@
 import os
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 
 # In[]: Imports
 import json
@@ -20,11 +20,16 @@ import cv2
 from utils.funcs import get_image
 from utils.generators import generator
 from utils.logger import Logger
+import segmentation_models as sm
+from segmentation_models import Linknet_bottleneck_crop
+from keras import optimizers, callbacks
+from keras_radam import RAdam
+from keras.utils import multi_gpu_model
+import tensorflow as tf
 
-# import segmentation_models as sm
-# from segmentation_models import Linknet_bottleneck_crop
-# from keras import optimizers, callbacks
-# from keras_radam import RAdam
+config = tf.ConfigProto(gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.9))
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
 
 # In[]: Parameters
 log = False
@@ -32,17 +37,19 @@ visualize = True
 class_weight_counting = True
 aug = True
 verbose = 1
+epochs = 1000
 
 classification_classes = 2
 segmentation_classes = 6
 
 resize = True
 input_shape = (256, 640, 3) if resize else (512, 1280, 3)
+gpus = len(os.environ["CUDA_VISIBLE_DEVICES"].split(','))
 
 backbone = 'resnet18'
 lr = 1e-3
 random_state = 28
-batch_size = 8
+batch_size = 16
 val_size = 0.2
 
 weights = None
@@ -67,9 +74,10 @@ BATCH SIZE: {batch_size}""")
 # In[]:
 dataset_dir = "../datasets/supervisely/kisi/"
 subdirs = ["2019-04-24", "2019-05-08", "2019-05-15", "2019-05-20", "2019-05-22", "2019-07-12", "2019-08-23"]
+subdirs = subdirs[1:]
 
 ann_files = []
-for subdir in subdirs[1:]:
+for subdir in subdirs:
     ann_files += [f for f in glob(dataset_dir + subdir + '/ann/' + '*.json', recursive=True)]
     
 print(f"DATASETS USED: {subdirs}")
@@ -100,7 +108,7 @@ if visualize:
     fig.tight_layout()
 
 # In[]: Prepare for training
-print(f"Train:Val = {1-val_size}:{val_size}\n")
+print(f"Train:Val split = {1-val_size}:{val_size}\n")
 
 ann_files_train, ann_files_val = train_test_split(ann_files, test_size=val_size, random_state=random_state)
 
@@ -160,8 +168,8 @@ cw = {"classification_output": class_weights_cl, "segmentation_output": class_we
 preprocessing_fn = sm.get_preprocessing(backbone)
 
 train_gen = generator(files = ann_files_train, 
-                             preprocessing_fn = preprocessing_fn, 
-                             batch_size = batch_size, 
+                             preprocess_input_fn = preprocessing_fn, 
+                             batch_size = batch_size*gpus, 
                              input_shape = input_shape, 
                              resize = resize, 
                              classification_classes = classification_classes, 
@@ -170,8 +178,8 @@ train_gen = generator(files = ann_files_train,
                              validate = False)
 
 val_gen = generator(files = ann_files_val, 
-                         preprocessing_fn = preprocessing_fn, 
-                         batch_size = batch_size, 
+                         preprocess_input_fn = preprocessing_fn, 
+                         batch_size = batch_size*gpus, 
                          input_shape = input_shape, 
                          resize = resize, 
                          classification_classes = classification_classes, 
@@ -182,6 +190,9 @@ val_gen = generator(files = ann_files_val,
 # In[]: Bottleneck
 model = sm.Linknet_bottleneck_crop(backbone_name=backbone, input_shape=input_shape, classification_classes=classification_classes, segmentation_classes=segmentation_classes, classification_activation='softmax', segmentation_activation='softmax')
 
+if gpus > 1:  
+    model = multi_gpu_model(model, gpus=gpus)
+    
 if weights:
     model.load_weights(weights)
 
@@ -218,11 +229,12 @@ for c in clbacks:
     print(f"{c}")
 
 # In[]: 
-steps_per_epoch = len(ann_files_train)//batch_size
-validation_steps = len(ann_files_val)//batch_size
-epochs = 1000
+steps_per_epoch = len(ann_files_train)//(batch_size*gpus)
+validation_steps = len(ann_files_val)//(batch_size*gpus)
 
 print(f"Steps per epoch: {steps_per_epoch}")
+
+sys.stdout.flush()
 
 print("Starting training...\n")
 history = model.fit_generator(

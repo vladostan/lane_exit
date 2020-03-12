@@ -24,7 +24,7 @@ def generator(files, preprocess_input_fn, batch_size = 1, input_shape = (256, 64
             # IMAGE
             x = get_image(path=files[i].replace('/ann/', '/img/').split('.json')[0], input_shape=input_shape, resize=resize)
             
-            if aug and not validate:
+            if do_aug and not validate:
                 x = augment(x)
             x_batch[b] = x
             
@@ -50,7 +50,7 @@ def generator(files, preprocess_input_fn, batch_size = 1, input_shape = (256, 64
 
             i += 1
             
-        x_batch = preprocessing_fn(x_batch)
+        x_batch = preprocess_input_fn(x_batch)
         y1_batch = to_categorical(y1_batch, num_classes=classification_classes).astype(np.int32)
         y2_batch = to_categorical(y2_batch, num_classes=segmentation_classes).astype(np.int32)
     
